@@ -10,6 +10,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@Table(name = "cart_items")
 public class CartItem {
 
     @Id

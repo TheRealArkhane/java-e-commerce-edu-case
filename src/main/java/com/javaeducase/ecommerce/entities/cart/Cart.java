@@ -18,13 +18,16 @@ public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> items = new ArrayList<>();
 
+    @Column(name = "total_price")
     private int totalPrice = 0;
 
+    @Column(name = "total_quantity")
     private int totalQuantity = 0;
 
     @ManyToOne

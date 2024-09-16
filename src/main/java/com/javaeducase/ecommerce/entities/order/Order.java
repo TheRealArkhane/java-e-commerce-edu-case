@@ -37,11 +37,11 @@ public class Order {
     DeliveryMethod deliveryMethod;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "delivery_method", nullable = false)
+    @Column(name = "payment_method", nullable = false)
     private PaymentMethod paymentMethod;
 
     @Column(name = "delivery_price")
-    int deliveryPrice = deliveryMethod.getPrice();
+    int deliveryPrice;
 
     @Column(name = "order_create_date_time", nullable = false)
     LocalDateTime orderCreateDateTime;
@@ -51,6 +51,7 @@ public class Order {
 
     @PrePersist
     protected void onCreate() {
-        orderCreateDateTime = LocalDateTime.now(); // Установка текущей даты и времени при создании заказа
+        orderCreateDateTime = LocalDateTime.now();
+        deliveryPrice = deliveryMethod != null ? deliveryMethod.getPrice() : 0;
     }
 }

@@ -8,7 +8,7 @@ import lombok.*;
 @Setter
 @EqualsAndHashCode
 @ToString
-@Table(name = "app_user")
+@Table(name = "app_users")
 public class User {
     @Id
     @Column(name = "id", unique = true, nullable = false)
