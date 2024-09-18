@@ -25,6 +25,9 @@ public class Product {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "is_deleted")
+    private Boolean isDeleted = false;
+
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;

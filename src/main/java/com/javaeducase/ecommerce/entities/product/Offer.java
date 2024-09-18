@@ -29,6 +29,9 @@ public class Offer {
     @Column(name = "stock_quantity", nullable = false)
     private int stockQuantity;
 
+    @Column(name = "is_deleted")
+    private Boolean isDeleted = false;
+
     @ManyToMany
     @JoinTable(name = "offer_attributes",
             joinColumns = @JoinColumn(name = "offer_id"),
