@@ -1,5 +1,7 @@
 package com.javaeducase.ecommerce.config;
 
+import com.javaeducase.ecommerce.services.user.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,13 +18,10 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserDetailsService userDetailsService;
-
-    public SecurityConfig(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
+    private final UserService userService;
 
     @Bean
     public GrantedAuthorityDefaults grantedAuthorityDefaults() {
@@ -38,8 +37,8 @@ public class SecurityConfig {
                 // Настройка авторизации запросов
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/register", "/auth/login").permitAll()  // Разрешить регистрацию и вход
-//                        .requestMatchers("/api/admin/**").hasRole("ADMIN")  // Доступ только для администратора
-                        .requestMatchers("/cart/**", "/orders/**").authenticated()  // Требовать аутентификацию для корзины и заказов
+                        .requestMatchers("/admin/**").hasRole("ADMIN")  // Доступ только для администратора
+                        .requestMatchers("/cart/**", "/orders/**", "/users/**").authenticated()
                         .anyRequest().permitAll()  // Разрешить все остальные запросы
                 )
 
@@ -57,6 +56,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
