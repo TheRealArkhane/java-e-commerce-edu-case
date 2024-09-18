@@ -2,8 +2,9 @@ package com.javaeducase.ecommerce.services.user;
 
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.entities.user.User;
-import com.javaeducase.ecommerce.exceptions.UserIsDeletedException;
-import com.javaeducase.ecommerce.exceptions.UserNotFoundException;
+import com.javaeducase.ecommerce.exceptions.user.IdenticalPasswordException;
+import com.javaeducase.ecommerce.exceptions.user.UserIsDeletedException;
+import com.javaeducase.ecommerce.exceptions.user.UserNotFoundException;
 import com.javaeducase.ecommerce.repositories.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -61,7 +62,7 @@ public class UserService implements UserDetailsService {
             throw new IllegalArgumentException("Старый пароль неверен");
         }
         if (!passwordEncoder.matches(oldPassword, newPassword)) {
-            throw new IllegalArgumentException("Новый пароль не может быть идентичен старому");
+            throw new IdenticalPasswordException("Новый пароль не может быть идентичен старому");
         }
         currentUser.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(currentUser);

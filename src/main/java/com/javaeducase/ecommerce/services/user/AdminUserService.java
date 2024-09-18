@@ -2,9 +2,9 @@ package com.javaeducase.ecommerce.services.user;
 
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.entities.user.User;
-import com.javaeducase.ecommerce.exceptions.InsufficientAdminPrivilegesException;
-import com.javaeducase.ecommerce.exceptions.UserIsDeletedException;
-import com.javaeducase.ecommerce.exceptions.UserNotFoundException;
+import com.javaeducase.ecommerce.exceptions.user.InsufficientAdminPrivilegesException;
+import com.javaeducase.ecommerce.exceptions.user.UserIsDeletedException;
+import com.javaeducase.ecommerce.exceptions.user.UserNotFoundException;
 import com.javaeducase.ecommerce.repositories.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

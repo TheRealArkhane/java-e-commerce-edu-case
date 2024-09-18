@@ -1,12 +1,11 @@
 package com.javaeducase.ecommerce.handlers;
 
-import com.javaeducase.ecommerce.exceptions.IdenticalPasswordException;
-import com.javaeducase.ecommerce.exceptions.InsufficientAdminPrivilegesException;
-import com.javaeducase.ecommerce.exceptions.UserIsDeletedException;
-import com.javaeducase.ecommerce.exceptions.UserNotFoundException;
+import com.javaeducase.ecommerce.exceptions.user.IdenticalPasswordException;
+import com.javaeducase.ecommerce.exceptions.user.InsufficientAdminPrivilegesException;
+import com.javaeducase.ecommerce.exceptions.user.UserIsDeletedException;
+import com.javaeducase.ecommerce.exceptions.user.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
