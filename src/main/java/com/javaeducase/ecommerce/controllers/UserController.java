@@ -41,6 +41,15 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
+    @DeleteMapping("/me")
+    public ResponseEntity<Map<String, String>> deleteCurrentUser(HttpServletResponse response) {
+        userService.deleteCurrentUser();
+        SecurityContextHolder.getContext().setAuthentication(null);
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("message", "User successfully deleted");
+        return ResponseEntity.ok(responseBody);
+    }
+
     @PostMapping("/me/change_password")
     public ResponseEntity<Map<String, String>> changePassword(@RequestBody ChangePasswordRequest request) {
         userService.changePassword(request.getOldPassword(), request.getNewPassword(), passwordEncoder);
@@ -53,14 +62,5 @@ public class UserController {
     public static class ChangePasswordRequest {
         private String oldPassword;
         private String newPassword;
-    }
-
-    @DeleteMapping("/me")
-    public ResponseEntity<Map<String, String>> deleteCurrentUser(HttpServletResponse response) {
-        userService.deleteCurrentUser();
-        SecurityContextHolder.getContext().setAuthentication(null);
-        Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("message", "User successfully deleted");
-        return ResponseEntity.ok(responseBody);
     }
 }
