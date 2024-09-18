@@ -1,4 +1,4 @@
-package com.javaeducase.ecommerce.controllers;
+package com.javaeducase.ecommerce.controllers.user;
 
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.services.user.AdminUserService;
@@ -8,7 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/admin/users")
@@ -28,18 +31,18 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDTO> updateUser(
             @PathVariable Long id,
-            @RequestBody UserDTO userDTO) {
+            @RequestBody UserDTO userDTO) throws AccessDeniedException {
         UserDTO updatedUser = adminUserService.updateUser(id, userDTO);
-        if (updatedUser.isDeleted()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
         return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Map<String, String>> deleteUser(@PathVariable Long id) {
+
         adminUserService.deleteUser(id);
-        return ResponseEntity.ok().build();
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("message", "Пользователь успешно удален");
+        return ResponseEntity.ok(responseBody);
     }
 }

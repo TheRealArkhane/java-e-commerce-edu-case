@@ -1,4 +1,4 @@
-package com.javaeducase.ecommerce.controllers;
+package com.javaeducase.ecommerce.controllers.user;
 
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.services.user.UserService;
@@ -35,9 +35,6 @@ public class UserController {
     @PutMapping("/me")
     public ResponseEntity<UserDTO> updateCurrentUser(@RequestBody UserDTO userDTO) {
         UserDTO updatedUser = userService.updateCurrentUser(userDTO);
-        if (updatedUser.isDeleted()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
         return ResponseEntity.ok(updatedUser);
     }
 
@@ -46,11 +43,11 @@ public class UserController {
         userService.deleteCurrentUser();
         SecurityContextHolder.getContext().setAuthentication(null);
         Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("message", "User successfully deleted");
+        responseBody.put("message", "Пользователь успешно удален");
         return ResponseEntity.ok(responseBody);
     }
 
-    @PostMapping("/me/change_password")
+    @PutMapping("/me/change_password")
     public ResponseEntity<Map<String, String>> changePassword(@RequestBody ChangePasswordRequest request) {
         userService.changePassword(request.getOldPassword(), request.getNewPassword(), passwordEncoder);
         Map<String, String> responseBody = new HashMap<>();

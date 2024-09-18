@@ -2,6 +2,7 @@ package com.javaeducase.ecommerce.exceptions;
 
 public class UserNotFoundException extends RuntimeException {
 
+
     // Конструктор по умолчанию
     public UserNotFoundException() {
         super();

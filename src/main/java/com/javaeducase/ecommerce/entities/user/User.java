@@ -29,8 +29,8 @@ public class User {
     private String password;
 
     @Column(name = "role", nullable = false)
-    private Role role = Role.USER;
+    private Role role;
 
     @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted = false;
+    private boolean isDeleted;
 }

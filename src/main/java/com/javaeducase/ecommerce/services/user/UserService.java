@@ -2,8 +2,9 @@ package com.javaeducase.ecommerce.services.user;
 
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.entities.user.User;
+import com.javaeducase.ecommerce.exceptions.UserIsDeletedException;
 import com.javaeducase.ecommerce.exceptions.UserNotFoundException;
-import com.javaeducase.ecommerce.repositories.UserRepository;
+import com.javaeducase.ecommerce.repositories.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,13 +22,15 @@ import java.util.List;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final UserUtils userUtils; // Add this
+    private final UserUtils userUtils;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь с email: " + email + " Не найден"));
-
+        if (user.isDeleted()) {
+            throw new UserIsDeletedException("Пользователь ранее был удален");
+        }
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
@@ -41,14 +44,24 @@ public class UserService implements UserDetailsService {
             throw new UserNotFoundException("Current user not found");
         }
         String email = ((UserDetails) authentication.getPrincipal()).getUsername();
-        return userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("Current user not found"));
+        if (user.isDeleted()) {
+            throw new UserIsDeletedException("Пользователь ранее был удален");
+        }
+        return user;
     }
 
     public void changePassword(String oldPassword, String newPassword, PasswordEncoder passwordEncoder) {
         User currentUser = getCurrentUser();
+        if (currentUser.isDeleted()) {
+            throw new UserIsDeletedException("Пользователь ранее был удален");
+        }
         if (!passwordEncoder.matches(oldPassword, currentUser.getPassword())) {
-            throw new IllegalArgumentException("Старый пароль неверный");
+            throw new IllegalArgumentException("Старый пароль неверен");
+        }
+        if (!passwordEncoder.matches(oldPassword, newPassword)) {
+            throw new IllegalArgumentException("Новый пароль не может быть идентичен старому");
         }
         currentUser.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(currentUser);
@@ -56,20 +69,34 @@ public class UserService implements UserDetailsService {
 
     public UserDTO getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
+        if (user.isDeleted()) {
+            throw new UserIsDeletedException("Пользователь ранее был удален");
+        }
         return userUtils.convertToDTO(user);
     }
 
     public UserDTO getUserByEmail(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
+        if (user.isDeleted()) {
+            throw new UserIsDeletedException("Пользователь ранее был удален");
+        }
         return userUtils.convertToDTO(user);
     }
 
     public UserDTO updateCurrentUser(UserDTO userDTO) {
         User currentUser = getCurrentUser();
-        userUtils.validateEmail(userDTO.getEmail());
-        currentUser.setEmail(userDTO.getEmail());
+        if (currentUser.isDeleted()) {
+            throw new UserIsDeletedException("Пользователь ранее был удален");
+        }
+        if (!currentUser.getEmail().equals(userDTO.getEmail())) {
+            userUtils.validateEmail(userDTO.getEmail());  // Проверяем формат нового email
+            if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
+                throw new IllegalArgumentException("Пользователь с таким email уже существует");
+            }
+            currentUser.setEmail(userDTO.getEmail());  // Устанавливаем новый email
+        }
         currentUser.setFirstName(userDTO.getFirstName());
         currentUser.setLastName(userDTO.getLastName());
         User updatedUser = userRepository.save(currentUser);
@@ -78,6 +105,9 @@ public class UserService implements UserDetailsService {
 
     public void deleteCurrentUser() {
         User currentUser = getCurrentUser();
+        if (currentUser.isDeleted()) {
+            throw new UserIsDeletedException("Пользователь ранее был удален");
+        }
         currentUser.setDeleted(true);
         userRepository.save(currentUser);
     }

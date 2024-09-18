@@ -1,4 +1,4 @@
-package com.javaeducase.ecommerce.repositories;
+package com.javaeducase.ecommerce.repositories.user;
 
 import com.javaeducase.ecommerce.entities.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -4,7 +4,7 @@ import com.javaeducase.ecommerce.dto.user.RegistrationDTO;
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.entities.user.Role;
 import com.javaeducase.ecommerce.entities.user.User;
-import com.javaeducase.ecommerce.repositories.UserRepository;
+import com.javaeducase.ecommerce.repositories.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class RegistrationService {
     public UserDTO registerUser(RegistrationDTO registrationDTO, PasswordEncoder passwordEncoder) {
         userUtils.validateEmail(registrationDTO.getEmail());
         if (userRepository.findByEmail(registrationDTO.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("User with email already exists");
+            throw new IllegalArgumentException("Пользователь с таким email уже существует");
         }
         User user = new User();
         user.setFirstName(registrationDTO.getFirstName());

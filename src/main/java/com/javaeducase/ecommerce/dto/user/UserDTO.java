@@ -1,5 +1,6 @@
 package com.javaeducase.ecommerce.dto.user;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.javaeducase.ecommerce.entities.user.Role;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,5 +15,7 @@ public class UserDTO {
     private String lastName;
     private String email;
     private Role role;
+
+    @JsonProperty("isDeleted")
     private boolean isDeleted;
 }

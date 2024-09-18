@@ -2,7 +2,7 @@ package com.javaeducase.ecommerce.services.user;
 
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.entities.user.User;
-import com.javaeducase.ecommerce.repositories.UserRepository;
+import com.javaeducase.ecommerce.repositories.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package com.javaeducase.ecommerce.controllers;
+package com.javaeducase.ecommerce.controllers.user;
 
 import com.javaeducase.ecommerce.dto.user.RegistrationDTO;
 import com.javaeducase.ecommerce.dto.user.UserDTO;
