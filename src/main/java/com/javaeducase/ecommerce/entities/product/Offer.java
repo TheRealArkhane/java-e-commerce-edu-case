@@ -24,10 +24,10 @@ public class Offer {
     private Product product;
 
     @Column(name = "price", nullable = false)
-    private int price;
+    private Integer price;
 
     @Column(name = "stock_quantity", nullable = false)
-    private int stockQuantity;
+    private Integer stockQuantity;
 
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;

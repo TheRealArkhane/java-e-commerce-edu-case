@@ -7,9 +7,9 @@ import com.javaeducase.ecommerce.exceptions.user.UserIsDeletedException;
 import com.javaeducase.ecommerce.exceptions.user.UserNotFoundException;
 import com.javaeducase.ecommerce.repositories.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +26,21 @@ public class AdminUserService {
                 .collect(Collectors.toList());
     }
 
-    public UserDTO updateUser(Long id, UserDTO userDTO) throws AccessDeniedException {
+    public void changePassword(Long id, String oldPassword, String newPassword, PasswordEncoder passwordEncoder) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
+        if (user.isDeleted()) {
+            throw new UserIsDeletedException("Пользователь ранее был удален");
+        }
+        if (user.getRole().name().equals("ADMIN")) {
+            throw new InsufficientAdminPrivilegesException("Администратор не может изменять данные другого администратора");
+        }
+        userUtils.checkPasswords(oldPassword, newPassword, user.getPassword(), passwordEncoder);
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+    public UserDTO updateUser(Long id, UserDTO userDTO) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
         if (user.isDeleted()) {

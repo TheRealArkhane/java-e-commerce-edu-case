@@ -2,7 +2,9 @@ package com.javaeducase.ecommerce.services.user;
 
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.entities.user.User;
+import com.javaeducase.ecommerce.exceptions.user.IdenticalPasswordException;
 import com.javaeducase.ecommerce.repositories.user.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -15,13 +17,22 @@ public class UserUtils {
 
     public void validateEmail(String email) {
         if (email == null || !email.matches(EMAIL_REGEX)) {
-            throw new IllegalArgumentException("Invalid email format");
+            throw new IllegalArgumentException("Неправильный формат email");
         }
     }
 
     public void checkEmailExists(String email) {
         if (userRepository.findByEmail(email).isPresent()) {
-            throw new IllegalArgumentException("Email already exists");
+            throw new IllegalArgumentException("Пользователь с таким email уже существует");
+        }
+    }
+
+    public void checkPasswords(String oldPassword, String newPassword, String storedPassword, PasswordEncoder passwordEncoder) {
+        if (!passwordEncoder.matches(oldPassword, storedPassword)) {
+            throw new IllegalArgumentException("Старый пароль неверен");
+        }
+        if (passwordEncoder.matches(newPassword, storedPassword)) {
+            throw new IdenticalPasswordException("Новый пароль не может быть идентичен старому");
         }
     }
 

@@ -58,12 +58,7 @@ public class UserService implements UserDetailsService {
         if (currentUser.isDeleted()) {
             throw new UserIsDeletedException("Пользователь ранее был удален");
         }
-        if (!passwordEncoder.matches(oldPassword, currentUser.getPassword())) {
-            throw new IllegalArgumentException("Старый пароль неверен");
-        }
-        if (!passwordEncoder.matches(oldPassword, newPassword)) {
-            throw new IdenticalPasswordException("Новый пароль не может быть идентичен старому");
-        }
+        userUtils.checkPasswords(oldPassword, newPassword, currentUser.getPassword(), passwordEncoder);
         currentUser.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(currentUser);
     }
