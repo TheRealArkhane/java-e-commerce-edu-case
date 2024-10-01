@@ -1,6 +1,7 @@
 package com.javaeducase.ecommerce.handlers;
 
 import com.javaeducase.ecommerce.exceptions.product.CategoryNotFoundException;
+import com.javaeducase.ecommerce.exceptions.product.DuplicateAttributeException;
 import com.javaeducase.ecommerce.exceptions.user.IdenticalPasswordException;
 import com.javaeducase.ecommerce.exceptions.user.InsufficientAdminPrivilegesException;
 import com.javaeducase.ecommerce.exceptions.user.UserIsDeletedException;
@@ -55,5 +56,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<CustomErrorResponse> handleCategoryNotFoundExceptions(CategoryNotFoundException ex) {
         CustomErrorResponse errorResponse = new CustomErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value());
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DuplicateAttributeException.class)
+    public ResponseEntity<CustomErrorResponse> handleDuplicateAttributeExceptions(DuplicateAttributeException ex) {
+        CustomErrorResponse errorResponse = new CustomErrorResponse(ex.getMessage(), HttpStatus.CONFLICT.value());
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 }

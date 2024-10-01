@@ -2,6 +2,8 @@ package com.javaeducase.ecommerce.services.product.attribute;
 
 import com.javaeducase.ecommerce.dto.product.AttributeDTO;
 import com.javaeducase.ecommerce.entities.product.Attribute;
+import com.javaeducase.ecommerce.exceptions.product.AttributeNotFoundException;
+import com.javaeducase.ecommerce.exceptions.product.DuplicateAttributeException;
 import com.javaeducase.ecommerce.repositories.product.AttributeRepository;
 import com.javaeducase.ecommerce.utils.product.CommonAllProductLinkedUtils;
 import lombok.RequiredArgsConstructor;
@@ -21,4 +23,24 @@ public class AdminAttributeService {
         Attribute savedAttribute = attributeRepository.save(attribute);
         return commonAllProductLinkedUtils.convertAttributeToAttributeDTO(savedAttribute);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public AttributeDTO updateAttribute(Long id, AttributeDTO attributeDTO) {
+        Attribute attribute = attributeRepository.findById(id)
+                .orElseThrow(() -> new AttributeNotFoundException("Атрибут с id: " + id + " не найден"));
+
+        String newName = attributeDTO.getName();
+        String newValue = attributeDTO.getValue();
+
+        if (attributeRepository.existsByNameAndValue(newName, newValue)) {
+            throw new DuplicateAttributeException("Атрибут с таким именем и значением уже существует.");
+        }
+
+        attribute.setName(newName);
+        attribute.setValue(newValue);
+
+        Attribute updatedAttribute = attributeRepository.save(attribute);
+        return commonAllProductLinkedUtils.convertAttributeToAttributeDTO(updatedAttribute);
+    }
+
 }

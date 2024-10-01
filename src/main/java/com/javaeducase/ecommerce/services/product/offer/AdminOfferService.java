@@ -1,10 +1,13 @@
 package com.javaeducase.ecommerce.services.product.offer;
 
 import com.javaeducase.ecommerce.dto.product.OfferDTO;
+import com.javaeducase.ecommerce.entities.product.Attribute;
 import com.javaeducase.ecommerce.entities.product.Offer;
 import com.javaeducase.ecommerce.entities.product.Product;
+import com.javaeducase.ecommerce.exceptions.product.AttributeNotFoundException;
 import com.javaeducase.ecommerce.exceptions.product.OfferNotFoundException;
 import com.javaeducase.ecommerce.exceptions.product.ProductNotFoundException;
+import com.javaeducase.ecommerce.repositories.product.AttributeRepository;
 import com.javaeducase.ecommerce.repositories.product.OfferRepository;
 import com.javaeducase.ecommerce.repositories.product.ProductRepository;
 import com.javaeducase.ecommerce.utils.product.CommonAllProductLinkedUtils;
@@ -18,6 +21,7 @@ public class AdminOfferService {
 
     private final OfferRepository offerRepository;
     private final ProductRepository productRepository;
+    private final AttributeRepository attributeRepository;
     private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -38,6 +42,36 @@ public class AdminOfferService {
 
         offer.setPrice(offerDTO.getPrice());
         offer.setStockQuantity(offerDTO.getStockQuantity());
+        Offer updatedOffer = offerRepository.save(offer);
+        return commonAllProductLinkedUtils.convertOfferToOfferDTO(updatedOffer);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public OfferDTO addAttributeToOffer(Long offerId, Long attributeId) {
+        Offer offer = offerRepository.findById(offerId)
+                .orElseThrow(() -> new OfferNotFoundException("Оффер с id: " + offerId + " не найден"));
+
+        Attribute attribute = attributeRepository.findById(attributeId)
+                .orElseThrow(() -> new AttributeNotFoundException("Атрибут с id: " + attributeId + " не найден"));
+
+        offer.getAttributes().add(attribute);
+        Offer updatedOffer = offerRepository.save(offer);
+
+        return commonAllProductLinkedUtils.convertOfferToOfferDTO(updatedOffer);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public OfferDTO removeAttributeFromOffer(Long offerId, Long attributeId) {
+        Offer offer = offerRepository.findById(offerId)
+                .orElseThrow(() -> new OfferNotFoundException("Оффер с id: " + offerId + " не найден"));
+
+        Attribute attribute = attributeRepository.findById(attributeId)
+                .orElseThrow(() -> new AttributeNotFoundException("Атрибут с id: " + attributeId + " не найден"));
+
+        if (!offer.getAttributes().remove(attribute)) {
+            throw new AttributeNotFoundException("Атрибут с id: " + attributeId + " не найден у оффера с id: " + offerId);
+        }
+
         Offer updatedOffer = offerRepository.save(offer);
         return commonAllProductLinkedUtils.convertOfferToOfferDTO(updatedOffer);
     }

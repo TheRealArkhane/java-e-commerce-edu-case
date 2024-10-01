@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface AttributeRepository extends JpaRepository<Attribute, Long> {
     List<Attribute> findByOfferId(Long offerId);
+    boolean existsByNameAndValue(String name, String value);
 }
