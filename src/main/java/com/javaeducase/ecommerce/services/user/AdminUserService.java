@@ -6,6 +6,7 @@ import com.javaeducase.ecommerce.exceptions.user.InsufficientAdminPrivilegesExce
 import com.javaeducase.ecommerce.exceptions.user.UserIsDeletedException;
 import com.javaeducase.ecommerce.exceptions.user.UserNotFoundException;
 import com.javaeducase.ecommerce.repositories.user.UserRepository;
+import com.javaeducase.ecommerce.utils.UserUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
