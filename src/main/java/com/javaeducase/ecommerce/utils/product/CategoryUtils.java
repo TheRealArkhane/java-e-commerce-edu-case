@@ -29,8 +29,8 @@ public class CategoryUtils {
         CategoryDTO categoryDTO = commonAllProductLinkedUtils.convertCategoryToCategoryDTO(category);
         List<CategoryDTO> childrenWithDescendants = category.getChildren().stream()
                 .map(this::convertToCategoryDTOWithDescendants)
-                .collect(Collectors.toList());
-        categoryDTO.setChildren(childrenWithDescendants);
+                .toList();
+//        categoryDTO.setChildren(childrenWithDescendants);
         return categoryDTO;
     }
 }

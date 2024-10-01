@@ -6,12 +6,12 @@ import com.javaeducase.ecommerce.entities.product.Category;
 import com.javaeducase.ecommerce.exceptions.product.CategoryNotFoundException;
 import com.javaeducase.ecommerce.repositories.product.CategoryRepository;
 import com.javaeducase.ecommerce.repositories.product.ProductRepository;
-import com.javaeducase.ecommerce.utils.product.CategoryUtils;
 import com.javaeducase.ecommerce.utils.product.CommonAllProductLinkedUtils;
 import com.javaeducase.ecommerce.utils.product.ProductUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,13 +22,7 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
     private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
-    private final CategoryUtils categoryUtils;
     private final ProductUtils productUtils;
-
-    public Category findCategoryById(Long id) {
-        return categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException("Категория не найдена"));
-    }
 
     public List<CategoryDTO> getAllCategories() {
         return categoryRepository.findAll().stream()
@@ -41,9 +35,13 @@ public class CategoryService {
         return commonAllProductLinkedUtils.convertCategoryToCategoryDTO(category);
     }
 
-    public CategoryDTO getCategoryWithDescendants(Long id) {
-        Category category = findCategoryById(id);
-        return categoryUtils.convertToCategoryDTOWithDescendants(category);
+    public List<CategoryDTO> getCategoryWithChildren(Long id) {
+        List<Category> childrenCategories = categoryRepository.findAllByParentId(id);
+        List<CategoryDTO> childrenCategoriesDTO = new ArrayList<>();
+        for (Category category : childrenCategories) {
+            childrenCategoriesDTO.add(commonAllProductLinkedUtils.convertCategoryToCategoryDTO(category));
+        }
+        return childrenCategoriesDTO;
     }
 
     public List<ProductDTO> getProductsByCategory(Long id) {
@@ -60,5 +58,10 @@ public class CategoryService {
         return productRepository.findByCategoryIn(categories).stream()
                 .map(productUtils::convertProductToProductDTO)
                 .collect(Collectors.toList());
+    }
+
+    public Category findCategoryById(Long id) {
+        return categoryRepository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException("Категория не найдена"));
     }
 }

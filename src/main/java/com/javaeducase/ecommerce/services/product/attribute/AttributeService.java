@@ -3,11 +3,14 @@ package com.javaeducase.ecommerce.services.product.attribute;
 import com.javaeducase.ecommerce.dto.product.AttributeDTO;
 import com.javaeducase.ecommerce.entities.product.Attribute;
 import com.javaeducase.ecommerce.exceptions.product.AttributeNotFoundException;
+import com.javaeducase.ecommerce.exceptions.product.OfferNotFoundException;
 import com.javaeducase.ecommerce.repositories.product.AttributeRepository;
+import com.javaeducase.ecommerce.repositories.product.OfferRepository;
 import com.javaeducase.ecommerce.utils.product.CommonAllProductLinkedUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,12 +19,17 @@ import java.util.stream.Collectors;
 public class AttributeService {
 
     private final AttributeRepository attributeRepository;
+    private final OfferRepository offerRepository;
     private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
 
     public List<AttributeDTO> getAttributesByOfferId(Long offerId) {
-        return attributeRepository.findByOfferId(offerId).stream()
-                .map(commonAllProductLinkedUtils::convertAttributeToAttributeDTO)
-                .collect(Collectors.toList());
+        List<Attribute> attributes = offerRepository.findById(offerId)
+                .orElseThrow(() -> new OfferNotFoundException("Оффер с id: " + offerId + " не найден")).getAttributes();
+        List<AttributeDTO> attributesDTO = new ArrayList<>();
+        for (Attribute attribute : attributes) {
+            attributesDTO.add(commonAllProductLinkedUtils.convertAttributeToAttributeDTO(attribute));
+        }
+        return attributesDTO;
     }
 
     public AttributeDTO getAttributeById(Long id) {

@@ -3,6 +3,7 @@ package com.javaeducase.ecommerce.controllers.user;
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.services.user.AdminUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +43,6 @@ public class AdminUserController {
         adminUserService.deleteUser(id);
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", "Пользователь успешно удален");
-        return ResponseEntity.ok(responseBody);
+        return new ResponseEntity<>(responseBody, HttpStatus.NO_CONTENT);
     }
 }

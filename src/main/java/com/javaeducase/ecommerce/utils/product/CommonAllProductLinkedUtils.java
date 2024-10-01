@@ -32,13 +32,13 @@ public class CommonAllProductLinkedUtils {
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setId(category.getId());
         categoryDTO.setName(category.getName());
-        if (category.getParent() != null) {
-            categoryDTO.setParent(convertCategoryToCategoryDTO(category.getParent()));
-        }
-        List<CategoryDTO> childrenDTOs = category.getChildren().stream()
-                .map(this::convertCategoryToCategoryDTO)
-                .collect(Collectors.toList());
-        categoryDTO.setChildren(childrenDTOs);
+//        if (category.getParent() != null) {
+//            categoryDTO.setParent(convertCategoryToCategoryDTO(category.getParent()));
+//        }
+//        List<CategoryDTO> childrenDTOs = category.getChildren().stream()
+//                .map(this::convertCategoryToCategoryDTO)
+//                .collect(Collectors.toList());
+//        categoryDTO.setChildren(childrenDTOs);
         return categoryDTO;
     }
 

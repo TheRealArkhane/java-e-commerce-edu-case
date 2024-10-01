@@ -5,6 +5,7 @@ import com.javaeducase.ecommerce.services.user.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,7 +44,7 @@ public class UserController {
         SecurityContextHolder.getContext().setAuthentication(null);
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", "Пользователь успешно удален");
-        return ResponseEntity.ok(responseBody);
+        return new ResponseEntity<>(responseBody, HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/me/change_password")

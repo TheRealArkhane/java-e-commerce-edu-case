@@ -25,27 +25,32 @@ public class AdminCategoryService {
     private final CategoryUtils categoryUtils;
 
     @PreAuthorize("hasRole('ADMIN')")
-    public CategoryDTO createCategory(String name, Long parentId) {
+    public CategoryDTO createCategory(CategoryDTO categoryDTO) {
         Category parentCategory = null;
-
-        if (parentId != null) {
-            parentCategory = categoryRepository.findById(parentId)
-                    .orElseThrow(() -> new CategoryNotFoundException("Родительская категория не найдена"));
-        }
+//        if (categoryDTO.getParent() != null && categoryDTO.getParent().getId() != null) {
+//            parentCategory = categoryRepository.findById(categoryDTO.getParent().getId())
+//                    .orElseThrow(() -> new CategoryNotFoundException("Родительская категория не найдена"));
+//        }
 
         Category newCategory = new Category();
-        newCategory.setName(name);
+        newCategory.setName(categoryDTO.getName());
         newCategory.setParent(parentCategory);
-
         Category savedCategory = categoryRepository.save(newCategory);
 
         if (parentCategory != null) {
             List<Category> childCategories = categoryRepository.findAllByParent(parentCategory);
 
+            parentCategory.setChildren(childCategories); // Устанавливаем детей для старого родителя
+            parentCategory.getChildren().add(savedCategory); // Добавляем новую категорию в детей родителя
+
+            // Устанавливаем старых детей родителя на новый уровень
             for (Category child : childCategories) {
-                child.setParent(savedCategory);
-                categoryRepository.save(child);
+                child.setParent(savedCategory); // Устанавливаем новым родителем для старой дочерней категории
             }
+
+            // Сохраняем обновления
+            categoryRepository.saveAll(childCategories); // Сохраняем все дочерние категории с новым родителем
+            categoryRepository.save(parentCategory); // Сохраняем обновленную родительскую категорию
         }
 
         return commonAllProductLinkedUtils.convertCategoryToCategoryDTO(savedCategory);

@@ -46,22 +46,4 @@ public class ProductService {
         }
         return productUtils.convertProductToProductDTO(product);
     }
-
-    public ProductDTO getProductWithAvailableOffers(Long productId) {
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException("Товар с id: " + productId + " не найден"));
-
-        ProductDTO productDTO = productUtils.convertProductToProductDTO(product);
-
-        if (product.getOffers() == null || product.getOffers().isEmpty()) {
-            productDTO.setOffers(Collections.emptyList());
-        } else {
-            List<OfferDTO> offerDTOs = product.getOffers().stream()
-                    .filter(offer -> offer.getStockQuantity() != 0)
-                    .map(commonAllProductLinkedUtils::convertOfferToOfferDTO)
-                    .collect(Collectors.toList());
-            productDTO.setOffers(offerDTOs);
-        }
-        return productDTO;
-    }
 }
