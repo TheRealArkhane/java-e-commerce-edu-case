@@ -7,7 +7,7 @@ import com.javaeducase.ecommerce.exceptions.product.OfferNotFoundException;
 import com.javaeducase.ecommerce.exceptions.product.ProductNotFoundException;
 import com.javaeducase.ecommerce.repositories.product.OfferRepository;
 import com.javaeducase.ecommerce.repositories.product.ProductRepository;
-import com.javaeducase.ecommerce.utils.OfferUtils;
+import com.javaeducase.ecommerce.utils.product.CommonAllProductLinkedUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,14 +20,14 @@ public class OfferService {
 
     private final OfferRepository offerRepository;
     private final ProductRepository productRepository;
-    private final OfferUtils offerUtils;
+    private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
 
     public List<OfferDTO> getAllOffersForProduct(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException("Product with id: " + productId + " not found"));
 
         return product.getOffers().stream()
-                .map(offerUtils::convertOfferToOfferDTO)
+                .map(commonAllProductLinkedUtils::convertOfferToOfferDTO)
                 .collect(Collectors.toList());
     }
 
@@ -35,6 +35,6 @@ public class OfferService {
         Offer offer = offerRepository.findById(offerId)
                 .orElseThrow(() -> new OfferNotFoundException("Offer with id: " + offerId + " not found"));
 
-        return offerUtils.convertOfferToOfferDTO(offer);
+        return commonAllProductLinkedUtils.convertOfferToOfferDTO(offer);
     }
 }

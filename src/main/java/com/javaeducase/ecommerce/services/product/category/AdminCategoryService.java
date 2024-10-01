@@ -6,7 +6,8 @@ import com.javaeducase.ecommerce.entities.product.Product;
 import com.javaeducase.ecommerce.exceptions.product.CategoryNotFoundException;
 import com.javaeducase.ecommerce.repositories.product.CategoryRepository;
 import com.javaeducase.ecommerce.repositories.product.ProductRepository;
-import com.javaeducase.ecommerce.utils.CategoryUtils;
+import com.javaeducase.ecommerce.utils.product.CategoryUtils;
+import com.javaeducase.ecommerce.utils.product.CommonAllProductLinkedUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,8 @@ public class AdminCategoryService {
 
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
+    private final CategoryService categoryService;
+    private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
     private final CategoryUtils categoryUtils;
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -45,20 +48,20 @@ public class AdminCategoryService {
             }
         }
 
-        return categoryUtils.convertCategoryToCategoryDTO(savedCategory);
+        return commonAllProductLinkedUtils.convertCategoryToCategoryDTO(savedCategory);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public CategoryDTO updateCategoryName(Long id, String newName) {
-        Category category = categoryUtils.findCategoryById(id);
+    public CategoryDTO updateCategory(Long id, String newName) {
+        Category category = categoryService.findCategoryById(id);
         category.setName(newName);
         Category updatedCategory = categoryRepository.save(category);
-        return categoryUtils.convertCategoryToCategoryDTO(updatedCategory);
+        return commonAllProductLinkedUtils.convertCategoryToCategoryDTO(updatedCategory);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteCategory(Long id) {
-        Category category = categoryUtils.findCategoryById(id);
+        Category category = categoryService.findCategoryById(id);
 
         List<Product> products = productRepository.findByCategory(category);
         for (Product product : products) {
@@ -66,6 +69,14 @@ public class AdminCategoryService {
             productRepository.save(product);
         }
 
-        categoryUtils.deleteCategoryAndDescendants(category);
+        deleteCategoryAndDescendants(category);
+    }
+
+    private void deleteCategoryAndDescendants(Category category) {
+        List<Category> descendants = categoryRepository.findAllByParent(category);
+        for (Category descendant : descendants) {
+            deleteCategoryAndDescendants(descendant);
+        }
+        categoryRepository.delete(category);
     }
 }

@@ -1,4 +1,4 @@
-package com.javaeducase.ecommerce.utils;
+package com.javaeducase.ecommerce.utils.user;
 
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.entities.user.User;

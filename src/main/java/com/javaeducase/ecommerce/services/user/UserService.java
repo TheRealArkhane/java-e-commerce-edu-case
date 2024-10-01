@@ -5,7 +5,7 @@ import com.javaeducase.ecommerce.entities.user.User;
 import com.javaeducase.ecommerce.exceptions.user.UserIsDeletedException;
 import com.javaeducase.ecommerce.exceptions.user.UserNotFoundException;
 import com.javaeducase.ecommerce.repositories.user.UserRepository;
-import com.javaeducase.ecommerce.utils.UserUtils;
+import com.javaeducase.ecommerce.utils.user.UserUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

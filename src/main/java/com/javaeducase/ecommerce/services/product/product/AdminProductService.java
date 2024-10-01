@@ -3,17 +3,14 @@ package com.javaeducase.ecommerce.services.product.product;
 import com.javaeducase.ecommerce.dto.product.ProductDTO;
 import com.javaeducase.ecommerce.entities.product.Category;
 import com.javaeducase.ecommerce.entities.product.Product;
-import com.javaeducase.ecommerce.exceptions.product.ProductNotFoundException;
 import com.javaeducase.ecommerce.exceptions.product.ProductIsDeletedException;
+import com.javaeducase.ecommerce.exceptions.product.ProductNotFoundException;
 import com.javaeducase.ecommerce.repositories.product.CategoryRepository;
 import com.javaeducase.ecommerce.repositories.product.ProductRepository;
-import com.javaeducase.ecommerce.utils.ProductUtils;
+import com.javaeducase.ecommerce.utils.product.ProductUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,13 +20,6 @@ public class AdminProductService {
     private final CategoryRepository categoryRepository;
     private final ProductUtils productUtils;
 
-    @PreAuthorize("hasRole('ADMIN')")
-    public List<ProductDTO> getAllDeletedProducts() {
-        return productRepository.findAll().stream()
-                .filter(Product::getIsDeleted)
-                .map(productUtils::convertProductToProductDTO)
-                .collect(Collectors.toList());
-    }
 
     @PreAuthorize("hasRole('ADMIN')")
     public ProductDTO createProduct(ProductDTO productDTO) {

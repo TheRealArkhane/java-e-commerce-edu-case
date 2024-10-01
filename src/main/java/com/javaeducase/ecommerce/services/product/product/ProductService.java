@@ -7,7 +7,8 @@ import com.javaeducase.ecommerce.entities.product.Product;
 import com.javaeducase.ecommerce.exceptions.product.ProductNotFoundException;
 import com.javaeducase.ecommerce.exceptions.product.ProductIsDeletedException;
 import com.javaeducase.ecommerce.repositories.product.ProductRepository;
-import com.javaeducase.ecommerce.utils.ProductUtils;
+import com.javaeducase.ecommerce.utils.product.CommonAllProductLinkedUtils;
+import com.javaeducase.ecommerce.utils.product.ProductUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,8 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ProductUtils productUtils;
+    private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
+
 
     public List<ProductDTO> getAllProducts() {
         return productRepository.findAll().stream()
@@ -48,23 +51,14 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException("Товар с id: " + productId + " не найден"));
 
-        if (product.getOffers() == null || product.getOffers().isEmpty()) {
-            ProductDTO productDTO = productUtils.convertProductToProductDTO(product);
-            productDTO.setOffers(Collections.emptyList());
-            return productDTO;
-        }
-
-        List<Offer> availableOffers = product.getOffers().stream()
-                .filter(offer -> offer.getStockQuantity() != 0)
-                .toList();
-
         ProductDTO productDTO = productUtils.convertProductToProductDTO(product);
 
-        if (availableOffers.isEmpty()) {
+        if (product.getOffers() == null || product.getOffers().isEmpty()) {
             productDTO.setOffers(Collections.emptyList());
         } else {
-            List<OfferDTO> offerDTOs = availableOffers.stream()
-                    .map(productUtils::convertOfferToOfferDTO)
+            List<OfferDTO> offerDTOs = product.getOffers().stream()
+                    .filter(offer -> offer.getStockQuantity() != 0)
+                    .map(commonAllProductLinkedUtils::convertOfferToOfferDTO)
                     .collect(Collectors.toList());
             productDTO.setOffers(offerDTOs);
         }
