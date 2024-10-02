@@ -1,5 +1,6 @@
 package com.javaeducase.ecommerce.controllers.product.product;
 
+import com.javaeducase.ecommerce.dto.product.OfferDTO;
 import com.javaeducase.ecommerce.dto.product.ProductDTO;
 import com.javaeducase.ecommerce.services.product.product.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +32,10 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
         return ResponseEntity.ok(productService.getProductById(id));
+    }
+
+    @GetMapping("/{id}/offers")
+    public ResponseEntity<List<OfferDTO>> getAllOffersOfProduct(@PathVariable Long id) {
+        return ResponseEntity.ok(productService.getAllOffersOfProduct(id));
     }
 }

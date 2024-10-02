@@ -1,5 +1,6 @@
 package com.javaeducase.ecommerce.controllers.product.product;
 
+import com.javaeducase.ecommerce.dto.product.OfferDTO;
 import com.javaeducase.ecommerce.dto.product.ProductDTO;
 import com.javaeducase.ecommerce.services.product.product.AdminProductService;
 import lombok.RequiredArgsConstructor;
@@ -40,5 +41,12 @@ public class AdminProductController {
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", "Товар успешно удален");
         return new ResponseEntity<>(responseBody, HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/{productId}/offers/add_offer")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ProductDTO> addOfferToProduct(@PathVariable Long productId, Long offerId) {
+        ProductDTO product = adminProductService.addOfferToProduct(productId, offerId);
+        return ResponseEntity.ok(product);
     }
 }

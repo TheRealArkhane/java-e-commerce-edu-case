@@ -2,17 +2,15 @@ package com.javaeducase.ecommerce.services.product.product;
 
 import com.javaeducase.ecommerce.dto.product.OfferDTO;
 import com.javaeducase.ecommerce.dto.product.ProductDTO;
-import com.javaeducase.ecommerce.entities.product.Offer;
 import com.javaeducase.ecommerce.entities.product.Product;
-import com.javaeducase.ecommerce.exceptions.product.ProductNotFoundException;
 import com.javaeducase.ecommerce.exceptions.product.ProductIsDeletedException;
+import com.javaeducase.ecommerce.exceptions.product.ProductNotFoundException;
 import com.javaeducase.ecommerce.repositories.product.ProductRepository;
 import com.javaeducase.ecommerce.utils.product.CommonAllProductLinkedUtils;
 import com.javaeducase.ecommerce.utils.product.ProductUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,5 +43,16 @@ public class ProductService {
             throw new ProductIsDeletedException("Товар был ранее удален");
         }
         return productUtils.convertProductToProductDTO(product);
+    }
+
+    public List<OfferDTO> getAllOffersOfProduct(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Товар с id: " + id + " не найден"));
+        if (product.getIsDeleted()) {
+            throw new ProductIsDeletedException("Товар был ранее удален");
+        }
+        return product.getOffers().stream()
+                .map(commonAllProductLinkedUtils::convertOfferToOfferDTO)
+                .collect(Collectors.toList());
     }
 }

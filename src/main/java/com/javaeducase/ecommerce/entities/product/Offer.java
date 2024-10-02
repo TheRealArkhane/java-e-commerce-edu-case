@@ -29,6 +29,9 @@ public class Offer {
     @Column(name = "stock_quantity", nullable = false)
     private Integer stockQuantity;
 
+    @Column(name = "is_available")
+    private Boolean isAvailable;
+
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;
 

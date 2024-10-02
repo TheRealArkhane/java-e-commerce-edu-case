@@ -2,6 +2,7 @@ package com.javaeducase.ecommerce.handlers;
 
 import com.javaeducase.ecommerce.exceptions.product.CategoryNotFoundException;
 import com.javaeducase.ecommerce.exceptions.product.DuplicateAttributeException;
+import com.javaeducase.ecommerce.exceptions.product.OfferIsDeletedException;
 import com.javaeducase.ecommerce.exceptions.product.ProductIsDeletedException;
 import com.javaeducase.ecommerce.exceptions.user.IdenticalPasswordException;
 import com.javaeducase.ecommerce.exceptions.user.InsufficientAdminPrivilegesException;
@@ -73,6 +74,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<CustomErrorResponse> handleIllegalStateExceptions(IllegalStateException ex) {
+        CustomErrorResponse errorResponse = new CustomErrorResponse(ex.getMessage(), HttpStatus.CONFLICT.value());
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(OfferIsDeletedException.class)
+    public ResponseEntity<CustomErrorResponse> handleOfferIsDeleted(OfferIsDeletedException ex) {
         CustomErrorResponse errorResponse = new CustomErrorResponse(ex.getMessage(), HttpStatus.CONFLICT.value());
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
