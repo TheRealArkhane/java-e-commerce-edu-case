@@ -40,7 +40,7 @@ public class AdminProductController {
         adminProductService.deleteProduct(id);
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", "Товар успешно удален");
-        return new ResponseEntity<>(responseBody, HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(responseBody);
     }
 
     @PostMapping("/{productId}/offers/add_offer")

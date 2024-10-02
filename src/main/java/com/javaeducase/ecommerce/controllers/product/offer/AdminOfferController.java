@@ -40,7 +40,7 @@ public class AdminOfferController {
         adminOfferService.deleteOffer(id);
         Map <String, String> responseBody = new HashMap<>();
         responseBody.put("message", "Предложение успешно удалено");
-        return new ResponseEntity<>(responseBody, HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(responseBody);
     }
 
     @PostMapping("/{id}/add_attribute")

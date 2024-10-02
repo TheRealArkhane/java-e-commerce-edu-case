@@ -18,6 +18,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class AdminProductService {
@@ -39,6 +42,8 @@ public class AdminProductService {
         product.setDescription(productDTO.getDescription());
         product.setCategory(category);
         product.setIsDeleted(false);
+        product.setOffers(new ArrayList<>());   // <--- т.к. офферы связаны с конкретным продуктом как @ManyToOne
+                                                //      и должны быть заведены отдельным методом
         Product savedProduct = productRepository.save(product);
         return productUtils.convertProductToProductDTO(savedProduct);
     }

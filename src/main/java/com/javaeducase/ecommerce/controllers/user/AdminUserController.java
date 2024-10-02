@@ -43,6 +43,6 @@ public class AdminUserController {
         adminUserService.deleteUser(id);
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", "Пользователь успешно удален");
-        return new ResponseEntity<>(responseBody, HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(responseBody);
     }
 }

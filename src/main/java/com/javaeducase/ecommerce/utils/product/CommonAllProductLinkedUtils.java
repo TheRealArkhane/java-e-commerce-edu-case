@@ -48,6 +48,7 @@ public class CommonAllProductLinkedUtils {
         offerDTO.setPrice(offer.getPrice());
         offerDTO.setStockQuantity(offer.getStockQuantity());
         offerDTO.setIsDeleted(offer.getIsDeleted());
+        offerDTO.setIsAvailable(offer.getIsAvailable());
         offerDTO.setAttributes(offer.getAttributes().stream()
                 .map(this::convertAttributeToAttributeDTO)
                 .collect(Collectors.toList()));
@@ -59,6 +60,7 @@ public class CommonAllProductLinkedUtils {
         offer.setPrice(offerDTO.getPrice());
         offer.setStockQuantity(offerDTO.getStockQuantity());
         offer.setIsDeleted(offerDTO.getIsDeleted());
+        offer.setIsAvailable(offerDTO.getIsAvailable());
         offer.setAttributes(offerDTO.getAttributes().stream()
                 .map(this::convertAttributeDTOToAttribute)
                 .collect(Collectors.toList()));

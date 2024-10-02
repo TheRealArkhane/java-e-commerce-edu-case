@@ -38,6 +38,6 @@ public class AdminCategoryController {
         adminCategoryService.deleteCategory(id);
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", "Категория успешно удалена");
-        return new ResponseEntity<>(responseBody, HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(responseBody);
     }
 }
