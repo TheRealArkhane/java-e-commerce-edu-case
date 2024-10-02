@@ -32,10 +32,10 @@ public class AdminOfferService {
 
         if (offerDTO.getStockQuantity() < 0) {
             throw new IllegalArgumentException("Значение количества на складе не может быть отрицательным");
-        } else if (!newOffer.getIsAvailable() && offerDTO.getStockQuantity() > 0) {
+        } else if (offerDTO.getStockQuantity() > 0) {
             newOffer.setStockQuantity(offerDTO.getStockQuantity());
             newOffer.setIsAvailable(true);
-        } else if (offerDTO.getIsAvailable() && offerDTO.getStockQuantity() == 0) {
+        } else {
             newOffer.setIsAvailable(false);
             newOffer.setStockQuantity(offerDTO.getStockQuantity());
         }

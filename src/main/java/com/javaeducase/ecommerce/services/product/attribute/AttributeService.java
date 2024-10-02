@@ -22,6 +22,13 @@ public class AttributeService {
     private final OfferRepository offerRepository;
     private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
 
+    public List<AttributeDTO> getAllAttributes() {
+        return attributeRepository.findAll()
+                .stream()
+                .map(commonAllProductLinkedUtils::convertAttributeToAttributeDTO)
+                .collect(Collectors.toList());
+    }
+
     public AttributeDTO getAttributeById(Long id) {
         Attribute attribute = attributeRepository.findById(id)
                 .orElseThrow(() -> new AttributeNotFoundException("Атрибут с id: " + id + " не найден"));

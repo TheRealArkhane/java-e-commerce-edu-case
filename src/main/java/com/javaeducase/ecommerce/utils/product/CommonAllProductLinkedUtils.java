@@ -16,6 +16,7 @@ public class CommonAllProductLinkedUtils {
 
     public AttributeDTO convertAttributeToAttributeDTO(Attribute attribute) {
         AttributeDTO attributeDTO = new AttributeDTO();
+        attributeDTO.setId(attribute.getId());
         attributeDTO.setName(attribute.getName());
         attributeDTO.setValue(attribute.getValue());
         return attributeDTO;
@@ -23,6 +24,7 @@ public class CommonAllProductLinkedUtils {
 
     public Attribute convertAttributeDTOToAttribute(AttributeDTO attributeDTO) {
         Attribute attribute = new Attribute();
+        attribute.setId(attributeDTO.getId());
         attribute.setName(attributeDTO.getName());
         attribute.setValue(attributeDTO.getValue());
         return attribute;

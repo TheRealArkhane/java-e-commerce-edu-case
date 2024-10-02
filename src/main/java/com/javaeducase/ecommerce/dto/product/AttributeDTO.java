@@ -8,6 +8,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class AttributeDTO {
+    private Long id;
     private String name;
     private String value;
 }
