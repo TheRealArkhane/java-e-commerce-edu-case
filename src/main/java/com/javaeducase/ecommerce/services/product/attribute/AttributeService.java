@@ -22,16 +22,6 @@ public class AttributeService {
     private final OfferRepository offerRepository;
     private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
 
-    public List<AttributeDTO> getAttributesByOfferId(Long offerId) {
-        List<Attribute> attributes = offerRepository.findById(offerId)
-                .orElseThrow(() -> new OfferNotFoundException("Оффер с id: " + offerId + " не найден")).getAttributes();
-        List<AttributeDTO> attributesDTO = new ArrayList<>();
-        for (Attribute attribute : attributes) {
-            attributesDTO.add(commonAllProductLinkedUtils.convertAttributeToAttributeDTO(attribute));
-        }
-        return attributesDTO;
-    }
-
     public AttributeDTO getAttributeById(Long id) {
         Attribute attribute = attributeRepository.findById(id)
                 .orElseThrow(() -> new AttributeNotFoundException("Атрибут с id: " + id + " не найден"));
