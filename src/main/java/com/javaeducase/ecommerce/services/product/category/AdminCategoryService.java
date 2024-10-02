@@ -6,7 +6,6 @@ import com.javaeducase.ecommerce.entities.product.Product;
 import com.javaeducase.ecommerce.exceptions.product.CategoryNotFoundException;
 import com.javaeducase.ecommerce.repositories.product.CategoryRepository;
 import com.javaeducase.ecommerce.repositories.product.ProductRepository;
-import com.javaeducase.ecommerce.utils.product.CategoryUtils;
 import com.javaeducase.ecommerce.utils.product.CommonAllProductLinkedUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,68 +19,56 @@ public class AdminCategoryService {
 
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
-    private final CategoryService categoryService;
     private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
-    private final CategoryUtils categoryUtils;
 
     @PreAuthorize("hasRole('ADMIN')")
-    public CategoryDTO createCategory(CategoryDTO categoryDTO) {
-        Category parentCategory = null;
-//        if (categoryDTO.getParent() != null && categoryDTO.getParent().getId() != null) {
-//            parentCategory = categoryRepository.findById(categoryDTO.getParent().getId())
-//                    .orElseThrow(() -> new CategoryNotFoundException("Родительская категория не найдена"));
-//        }
+    public CategoryDTO updateCategory(Long id, CategoryDTO categoryDTO) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException("Категория с id: " + id + " не найдена"));
 
-        Category newCategory = new Category();
-        newCategory.setName(categoryDTO.getName());
-        newCategory.setParent(parentCategory);
-        Category savedCategory = categoryRepository.save(newCategory);
-
-        if (parentCategory != null) {
-            List<Category> childCategories = categoryRepository.findAllByParent(parentCategory);
-
-            parentCategory.setChildren(childCategories); // Устанавливаем детей для старого родителя
-            parentCategory.getChildren().add(savedCategory); // Добавляем новую категорию в детей родителя
-
-            // Устанавливаем старых детей родителя на новый уровень
-            for (Category child : childCategories) {
-                child.setParent(savedCategory); // Устанавливаем новым родителем для старой дочерней категории
-            }
-
-            // Сохраняем обновления
-            categoryRepository.saveAll(childCategories); // Сохраняем все дочерние категории с новым родителем
-            categoryRepository.save(parentCategory); // Сохраняем обновленную родительскую категорию
-        }
-
-        return commonAllProductLinkedUtils.convertCategoryToCategoryDTO(savedCategory);
+        category.setName(categoryDTO.getName());
+        categoryRepository.save(category);
+        return commonAllProductLinkedUtils.convertCategoryToCategoryDTO(category);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public CategoryDTO updateCategory(Long id, String newName) {
-        Category category = categoryService.findCategoryById(id);
-        category.setName(newName);
-        Category updatedCategory = categoryRepository.save(category);
-        return commonAllProductLinkedUtils.convertCategoryToCategoryDTO(updatedCategory);
+    public CategoryDTO createCategory(CategoryDTO categoryDTO) {
+        Category newCategory = new Category();
+        newCategory.setName(categoryDTO.getName());
+
+        if (categoryDTO.getParent() != null) {
+            Category parentCategory = categoryRepository.findById(categoryDTO.getParent().getId())
+                    .orElseThrow(() -> new CategoryNotFoundException("Родительская категория с id: "
+                            + categoryDTO.getParent().getId() + " не найдена"));
+            newCategory.setParent(parentCategory);
+            parentCategory.getChildren().add(newCategory); // Добавляем новую категорию в список дочерних
+        }
+        else {
+            newCategory.setParent(null);
+        }
+
+        categoryRepository.save(newCategory);
+        return commonAllProductLinkedUtils.convertCategoryToCategoryDTO(newCategory);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteCategory(Long id) {
-        Category category = categoryService.findCategoryById(id);
 
-        List<Product> products = productRepository.findByCategory(category);
-        for (Product product : products) {
-            categoryUtils.markProductAndOffersAsDeleted(product);
-            productRepository.save(product);
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException("Категория с id: " + id + " не найдена"));
+
+        if (!category.getChildren().isEmpty()) {
+            throw new IllegalStateException("Категория не может быть удалена, так как у неё есть дочерние категории.");
         }
 
-        deleteCategoryAndDescendants(category);
-    }
+        List<Product> productsInCategory = productRepository.findByCategoryId(id);
 
-    private void deleteCategoryAndDescendants(Category category) {
-        List<Category> descendants = categoryRepository.findAllByParent(category);
-        for (Category descendant : descendants) {
-            deleteCategoryAndDescendants(descendant);
+        if (!productsInCategory.isEmpty()) {
+            for (Product product : productsInCategory) {
+                product.setIsDeleted(true);
+            }
         }
+        productRepository.saveAll(productsInCategory);
         categoryRepository.delete(category);
     }
 }

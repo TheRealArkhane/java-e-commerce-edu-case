@@ -11,7 +11,6 @@ import com.javaeducase.ecommerce.utils.product.ProductUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,43 +24,31 @@ public class CategoryService {
     private final ProductUtils productUtils;
 
     public List<CategoryDTO> getAllCategories() {
-        return categoryRepository.findAll().stream()
+        List<Category> categories = categoryRepository.findAll();
+        return categories.stream()
                 .map(commonAllProductLinkedUtils::convertCategoryToCategoryDTO)
                 .collect(Collectors.toList());
     }
 
-    public CategoryDTO getCategory(Long id) {
-        Category category = findCategoryById(id);
+    public CategoryDTO getCategoryById(Long id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException("Категория с id: " + id + " не найдена"));
         return commonAllProductLinkedUtils.convertCategoryToCategoryDTO(category);
     }
 
-    public List<CategoryDTO> getCategoryWithChildren(Long id) {
-        List<Category> childrenCategories = categoryRepository.findAllByParentId(id);
-        List<CategoryDTO> childrenCategoriesDTO = new ArrayList<>();
-        for (Category category : childrenCategories) {
-            childrenCategoriesDTO.add(commonAllProductLinkedUtils.convertCategoryToCategoryDTO(category));
-        }
-        return childrenCategoriesDTO;
-    }
-
-    public List<ProductDTO> getProductsByCategory(Long id) {
-        Category category = findCategoryById(id);
-        return productRepository.findByCategory(category).stream()
-                .map(productUtils::convertProductToProductDTO)
+    public List<CategoryDTO> getCategoryChildren(Long id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException("Категория с id: " + id + " не найдена"));
+        return category.getChildren().stream()
+                .map(commonAllProductLinkedUtils::convertCategoryToCategoryDTO)
                 .collect(Collectors.toList());
     }
 
-    public List<ProductDTO> getProductsByCategoryAndDescendants(Long id) {
-        Category category = findCategoryById(id);
-        List<Category> categories = categoryRepository.findAllByParent(category);
-        categories.add(category);
-        return productRepository.findByCategoryIn(categories).stream()
+    public List<ProductDTO> getCategoryProducts(Long id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException("Категория с id: " + id + " не найдена"));
+        return category.getProducts().stream()
                 .map(productUtils::convertProductToProductDTO)
                 .collect(Collectors.toList());
-    }
-
-    public Category findCategoryById(Long id) {
-        return categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException("Категория не найдена"));
     }
 }

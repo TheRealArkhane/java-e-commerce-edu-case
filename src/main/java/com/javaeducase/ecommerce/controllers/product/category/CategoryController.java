@@ -16,29 +16,27 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    @GetMapping("/all")
-    public ResponseEntity<List<CategoryDTO>> findAll() {
+    @GetMapping
+    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
         List<CategoryDTO> categories = categoryService.getAllCategories();
         return ResponseEntity.ok(categories);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDTO> getCategory(@PathVariable Long id) {
-        return ResponseEntity.ok(categoryService.getCategory(id));
+    public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable Long id) {
+        CategoryDTO category = categoryService.getCategoryById(id);
+        return ResponseEntity.ok(category);
     }
 
-    @GetMapping("/{id}/with_descendants")
-    public ResponseEntity<List<CategoryDTO>> getCategoryWithDescendants(@PathVariable Long id) {
-        return ResponseEntity.ok(categoryService.getCategoryWithChildren(id));
+    @GetMapping("/{id}/children")
+    public ResponseEntity<List<CategoryDTO>> getCategoryChildren(@PathVariable Long id) {
+        List<CategoryDTO> children = categoryService.getCategoryChildren(id);
+        return ResponseEntity.ok(children);
     }
 
     @GetMapping("/{id}/products")
-    public ResponseEntity<List<ProductDTO>> getProductsByCategory(@PathVariable Long id) {
-        return ResponseEntity.ok(categoryService.getProductsByCategory(id));
-    }
-
-    @GetMapping("/{id}/with_descendants/products")
-    public ResponseEntity<List<ProductDTO>> getProductsByCategoryAndDescendants(@PathVariable Long id) {
-        return ResponseEntity.ok(categoryService.getProductsByCategoryAndDescendants(id));
+    public ResponseEntity<List<ProductDTO>> getCategoryProducts(@PathVariable Long id) {
+        List<ProductDTO> products = categoryService.getCategoryProducts(id);
+        return ResponseEntity.ok(products);
     }
 }
