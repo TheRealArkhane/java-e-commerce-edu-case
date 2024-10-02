@@ -86,19 +86,19 @@ public class AdminOfferService {
         return commonAllProductLinkedUtils.convertOfferToOfferDTO(updatedOffer);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    public OfferDTO removeAttributeFromOffer(Long offerId, Long attributeId) {
-        Offer offer = getOfferByIdCheckIsDeleted(offerId);
-        Attribute attribute = attributeRepository.findById(attributeId)
-                .orElseThrow(() -> new AttributeNotFoundException("Атрибут с id: " + attributeId + " не найден"));
-
-        if (!offer.getAttributes().remove(attribute)) {
-            throw new AttributeNotFoundException("Атрибут с id: " + attributeId + " не найден у оффера с id: " + offerId);
-        }
-
-        Offer updatedOffer = offerRepository.save(offer);
-        return commonAllProductLinkedUtils.convertOfferToOfferDTO(updatedOffer);
-    }
+//    @PreAuthorize("hasRole('ADMIN')")
+//    public OfferDTO removeAttributeFromOffer(Long offerId, Long attributeId) {
+//        Offer offer = getOfferByIdCheckIsDeleted(offerId);
+//        Attribute attribute = attributeRepository.findById(attributeId)
+//                .orElseThrow(() -> new AttributeNotFoundException("Атрибут с id: " + attributeId + " не найден"));
+//
+//        if (!offer.getAttributes().remove(attribute)) {
+//            throw new AttributeNotFoundException("Атрибут с id: " + attributeId + " не найден у оффера с id: " + offerId);
+//        }
+//
+//        Offer updatedOffer = offerRepository.save(offer);
+//        return commonAllProductLinkedUtils.convertOfferToOfferDTO(updatedOffer);
+//    }
 
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteOffer(Long offerId) {
