@@ -3,28 +3,36 @@ package com.javaeducase.ecommerce.services.product.offer;
 import com.javaeducase.ecommerce.dto.product.OfferDTO;
 import com.javaeducase.ecommerce.entities.product.Attribute;
 import com.javaeducase.ecommerce.entities.product.Offer;
+import com.javaeducase.ecommerce.entities.product.Product;
 import com.javaeducase.ecommerce.exceptions.product.AttributeNotFoundException;
 import com.javaeducase.ecommerce.exceptions.product.OfferIsDeletedException;
 import com.javaeducase.ecommerce.exceptions.product.OfferNotFoundException;
+import com.javaeducase.ecommerce.exceptions.product.ProductNotFoundException;
 import com.javaeducase.ecommerce.repositories.product.AttributeRepository;
 import com.javaeducase.ecommerce.repositories.product.OfferRepository;
+import com.javaeducase.ecommerce.repositories.product.ProductRepository;
 import com.javaeducase.ecommerce.utils.product.CommonAllProductLinkedUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
 public class AdminOfferService {
 
     private final OfferRepository offerRepository;
+    private final ProductRepository productRepository;
     private final AttributeRepository attributeRepository;
     private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
 
     @PreAuthorize("hasRole('ADMIN')")
-    public OfferDTO createOffer(OfferDTO offerDTO) {
+    public OfferDTO createProductOffer(Long productId, OfferDTO offerDTO) {
         Offer newOffer = new Offer();
-
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException("Товар с id: " + productId + " не найден"));
+        newOffer.setProduct(product);
         if (offerDTO.getPrice() < 0) {
             throw new IllegalArgumentException("Цена не может быть отрицательной");
         }
@@ -39,9 +47,13 @@ public class AdminOfferService {
             newOffer.setIsAvailable(false);
             newOffer.setStockQuantity(offerDTO.getStockQuantity());
         }
-        newOffer.setStockQuantity(offerDTO.getStockQuantity());
-        newOffer.setIsAvailable(true);
-
+        if (offerDTO.getAttributes() != null) {
+            newOffer.setAttributes(offerDTO.getAttributes()
+                    .stream()
+                    .map(commonAllProductLinkedUtils::convertAttributeDTOToAttribute)
+                    .toList());
+        }
+        else newOffer.setAttributes(new ArrayList<>());
         newOffer.setIsDeleted(false);
         offerRepository.save(newOffer);
         return commonAllProductLinkedUtils.convertOfferToOfferDTO(newOffer);
@@ -84,6 +96,19 @@ public class AdminOfferService {
         Offer updatedOffer = offerRepository.save(offer);
 
         return commonAllProductLinkedUtils.convertOfferToOfferDTO(updatedOffer);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public OfferDTO deleteAttributeFromOffer(Long offerId, Long attributeId) {
+        Offer offer = getOfferByIdCheckIsDeleted(offerId);
+        Attribute attribute = attributeRepository.findById(attributeId)
+                .orElseThrow(() -> new AttributeNotFoundException("Атрибут с id: " + attributeId + " не найден"));
+
+        if (offer.getAttributes().remove(attribute)) {
+            offerRepository.save(offer);
+            return commonAllProductLinkedUtils.convertOfferToOfferDTO(offer);
+        }
+        else throw new AttributeNotFoundException("Атрибут с id: " + attributeId + " не найден в предложении с id: " + offerId);
     }
 
 //    @PreAuthorize("hasRole('ADMIN')")

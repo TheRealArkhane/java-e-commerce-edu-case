@@ -23,4 +23,8 @@ public class CartItem {
 
     @Column(nullable = false)
     private int quantity;
+
+    public Integer getTotalPrice() {
+        return offer.getPrice() * quantity;
+    }
 }

@@ -1,6 +1,5 @@
 package com.javaeducase.ecommerce.services.product.product;
 
-import com.javaeducase.ecommerce.dto.product.OfferDTO;
 import com.javaeducase.ecommerce.dto.product.ProductDTO;
 import com.javaeducase.ecommerce.entities.product.Category;
 import com.javaeducase.ecommerce.entities.product.Offer;
@@ -19,7 +18,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

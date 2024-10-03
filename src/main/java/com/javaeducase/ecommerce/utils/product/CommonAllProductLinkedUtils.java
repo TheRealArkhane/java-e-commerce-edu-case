@@ -57,15 +57,15 @@ public class CommonAllProductLinkedUtils {
         return offerDTO;
     }
 
-    public Offer convertOfferDTOToOffer(OfferDTO offerDTO) {
-        Offer offer = new Offer();
-        offer.setPrice(offerDTO.getPrice());
-        offer.setStockQuantity(offerDTO.getStockQuantity());
-        offer.setIsDeleted(offerDTO.getIsDeleted());
-        offer.setIsAvailable(offerDTO.getIsAvailable());
-        offer.setAttributes(offerDTO.getAttributes().stream()
-                .map(this::convertAttributeDTOToAttribute)
-                .collect(Collectors.toList()));
-        return offer;
-    }
+//    public Offer convertOfferDTOToOffer(OfferDTO offerDTO) {
+//        Offer offer = new Offer();
+//        offer.setPrice(offerDTO.getPrice());
+//        offer.setStockQuantity(offerDTO.getStockQuantity());
+//        offer.setIsDeleted(offerDTO.getIsDeleted());
+//        offer.setIsAvailable(offerDTO.getIsAvailable());
+//        offer.setAttributes(offerDTO.getAttributes().stream()
+//                .map(this::convertAttributeDTOToAttribute)
+//                .collect(Collectors.toList()));
+//        return offer;
+//    }
 }

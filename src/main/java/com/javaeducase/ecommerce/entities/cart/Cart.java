@@ -22,15 +22,31 @@ public class Cart {
     private Long id;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CartItem> items = new ArrayList<>();
+    private List<CartItem> items = new ArrayList<>(); ;
 
-    @Column(name = "total_price")
-    private int totalPrice = 0;
+    @Column(name = "total_amount")
+    private int totalAmount;
 
     @Column(name = "total_quantity")
-    private int totalQuantity = 0;
+    private int totalQuantity;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne(mappedBy = "cart", cascade = CascadeType.ALL)
     private User user;
+
+
+    public Integer getTotalAmount() {
+        return items.stream().mapToInt(CartItem::getTotalPrice).sum();
+    }
+
+    public Integer getTotalQuantity() {
+        return items.stream().mapToInt(CartItem::getQuantity).sum();
+    }
+
+    public void addItem(CartItem item) {
+        items.add(item);
+    }
+
+    public void removeItem(CartItem item) {
+        items.remove(item);
+    }
 }

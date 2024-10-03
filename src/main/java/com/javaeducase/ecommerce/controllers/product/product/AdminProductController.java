@@ -2,6 +2,7 @@ package com.javaeducase.ecommerce.controllers.product.product;
 
 import com.javaeducase.ecommerce.dto.product.OfferDTO;
 import com.javaeducase.ecommerce.dto.product.ProductDTO;
+import com.javaeducase.ecommerce.services.product.offer.AdminOfferService;
 import com.javaeducase.ecommerce.services.product.product.AdminProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import java.util.Map;
 public class AdminProductController {
 
     private final AdminProductService adminProductService;
+    private final AdminOfferService adminOfferService;
 
 
     @PostMapping
@@ -43,10 +45,9 @@ public class AdminProductController {
         return ResponseEntity.ok(responseBody);
     }
 
-    @PostMapping("/{productId}/offers/add_offer")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ProductDTO> addOfferToProduct(@PathVariable Long productId, Long offerId) {
-        ProductDTO product = adminProductService.addOfferToProduct(productId, offerId);
-        return ResponseEntity.ok(product);
+    @PostMapping("/{productId}/offers")
+    public ResponseEntity<OfferDTO> createProductOffer(@PathVariable Long productId, @RequestBody OfferDTO offerDTO) {
+        OfferDTO createdOffer = adminOfferService.createProductOffer(productId, offerDTO);
+        return new ResponseEntity<>(createdOffer, HttpStatus.CREATED);
     }
 }

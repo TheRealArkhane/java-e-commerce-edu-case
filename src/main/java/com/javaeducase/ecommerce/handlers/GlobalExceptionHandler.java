@@ -1,9 +1,7 @@
 package com.javaeducase.ecommerce.handlers;
 
-import com.javaeducase.ecommerce.exceptions.product.CategoryNotFoundException;
-import com.javaeducase.ecommerce.exceptions.product.DuplicateAttributeException;
-import com.javaeducase.ecommerce.exceptions.product.OfferIsDeletedException;
-import com.javaeducase.ecommerce.exceptions.product.ProductIsDeletedException;
+import com.javaeducase.ecommerce.exceptions.cart.CartItemNotFoundException;
+import com.javaeducase.ecommerce.exceptions.product.*;
 import com.javaeducase.ecommerce.exceptions.user.IdenticalPasswordException;
 import com.javaeducase.ecommerce.exceptions.user.InsufficientAdminPrivilegesException;
 import com.javaeducase.ecommerce.exceptions.user.UserIsDeletedException;
@@ -80,6 +78,18 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(OfferIsDeletedException.class)
     public ResponseEntity<CustomErrorResponse> handleOfferIsDeleted(OfferIsDeletedException ex) {
+        CustomErrorResponse errorResponse = new CustomErrorResponse(ex.getMessage(), HttpStatus.CONFLICT.value());
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(OfferIsUnavailableException.class)
+    public ResponseEntity<CustomErrorResponse> handleOfferIsUnavailableExceptions(OfferIsUnavailableException ex) {
+        CustomErrorResponse errorResponse = new CustomErrorResponse(ex.getMessage(), HttpStatus.CONFLICT.value());
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(CartItemNotFoundException.class)
+    public ResponseEntity<CustomErrorResponse> handleCartItemNotFoundExceptions(CartItemNotFoundException ex) {
         CustomErrorResponse errorResponse = new CustomErrorResponse(ex.getMessage(), HttpStatus.CONFLICT.value());
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }

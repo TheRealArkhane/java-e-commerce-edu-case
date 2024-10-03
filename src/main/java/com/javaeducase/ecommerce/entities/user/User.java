@@ -1,5 +1,6 @@
 package com.javaeducase.ecommerce.entities.user;
 
+import com.javaeducase.ecommerce.entities.cart.Cart;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,4 +34,12 @@ public class User {
 
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "cart_id", referencedColumnName = "id")
+    private Cart cart;
+
+    public User() {
+        this.cart = new Cart(); // инициализация пустой корзины при создании пользователя
+    }
 }

@@ -20,18 +20,11 @@ public class AdminOfferController {
     private final AdminOfferService adminOfferService;
     private final OfferService offerService;
 
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<OfferDTO> createOffer(@RequestBody OfferDTO offerDTO) {
-        adminOfferService.createOffer(offerDTO);
-        return ResponseEntity.ok(offerDTO);
-    }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<OfferDTO> updateOffer(@PathVariable Long id, @RequestBody OfferDTO offerDTO) {
-        adminOfferService.updateOffer(id, offerDTO);
-        return ResponseEntity.ok(offerDTO);
+        return ResponseEntity.ok(adminOfferService.updateOffer(id, offerDTO));
     }
 
     @DeleteMapping("/{id}")
@@ -43,11 +36,17 @@ public class AdminOfferController {
         return ResponseEntity.ok(responseBody);
     }
 
-    @PostMapping("/{id}/add_attribute")
+    @PostMapping("/{id}/attribute")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<OfferDTO> addAttribute(@PathVariable Long id, @RequestParam Long attributeId) {
         adminOfferService.addAttributeToOffer(id, attributeId);
         return ResponseEntity.ok(offerService.getOfferById(id));
+    }
+
+    @DeleteMapping("/{id}/attribute")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<OfferDTO> removeAttribute(@PathVariable Long id, @RequestParam Long attributeId) {
+        return ResponseEntity.ok(adminOfferService.deleteAttributeFromOffer(id, attributeId));
     }
 
 }
