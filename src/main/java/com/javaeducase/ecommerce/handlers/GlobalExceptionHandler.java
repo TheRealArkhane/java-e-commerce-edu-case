@@ -1,6 +1,7 @@
 package com.javaeducase.ecommerce.handlers;
 
 import com.javaeducase.ecommerce.exceptions.cart.CartItemNotFoundException;
+import com.javaeducase.ecommerce.exceptions.cart.CartNotFoundException;
 import com.javaeducase.ecommerce.exceptions.product.*;
 import com.javaeducase.ecommerce.exceptions.user.IdenticalPasswordException;
 import com.javaeducase.ecommerce.exceptions.user.InsufficientAdminPrivilegesException;
@@ -90,7 +91,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CartItemNotFoundException.class)
     public ResponseEntity<CustomErrorResponse> handleCartItemNotFoundExceptions(CartItemNotFoundException ex) {
-        CustomErrorResponse errorResponse = new CustomErrorResponse(ex.getMessage(), HttpStatus.CONFLICT.value());
-        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+        CustomErrorResponse errorResponse = new CustomErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(CartNotFoundException.class)
+    public ResponseEntity<CustomErrorResponse> handleCartNotFoundExceptions(CartItemNotFoundException ex) {
+        CustomErrorResponse errorResponse = new CustomErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 }

@@ -7,6 +7,7 @@ import com.javaeducase.ecommerce.entities.cart.Cart;
 import com.javaeducase.ecommerce.entities.cart.CartItem;
 import com.javaeducase.ecommerce.entities.product.Offer;
 import com.javaeducase.ecommerce.entities.user.User;
+import com.javaeducase.ecommerce.exceptions.cart.CartNotFoundException;
 import com.javaeducase.ecommerce.exceptions.product.OfferIsDeletedException;
 import com.javaeducase.ecommerce.exceptions.product.OfferIsUnavailableException;
 import com.javaeducase.ecommerce.exceptions.product.OfferNotFoundException;
@@ -33,7 +34,7 @@ public class CartService {
     private final CartUtils cartUtils;
     private final UserRepository userRepository;
 
-    public CartDTO cartCalculate(RequestCartItemDTO requestCartItemDTO) {
+    public CartDTO calculateCart(Long userId, RequestCartItemDTO requestCartItemDTO) {
         int quantity = requestCartItemDTO.getQuantity();
         Long offerId = requestCartItemDTO.getOfferId();
 
@@ -41,7 +42,8 @@ public class CartService {
             throw new IllegalArgumentException("Quantity must be greater than 0");
         }
 
-        Cart cart = findOrCreateCart();
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new CartNotFoundException("Cart not found"));
 
         Offer offer = offerRepository.findById(offerId)
                 .orElseThrow(() -> new OfferNotFoundException("Offer not found"));
