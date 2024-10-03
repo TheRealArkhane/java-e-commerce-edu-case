@@ -27,7 +27,7 @@ public class CartItemService {
         Offer offer = offerRepository.findById(offerId)
                 .orElseThrow(() -> new OfferNotFoundException("Предложение с id: " + offerId + " не найдено"));
 
-        if (!offer.getIsDeleted()) throw new OfferIsDeletedException("Предложение было удалено");
+        if (offer.getIsDeleted()) throw new OfferIsDeletedException("Предложение было удалено");
         if (!offer.getIsAvailable()) throw new OfferIsUnavailableException("Предложение на данный момент недоступно");
         if (quantity > offer.getStockQuantity()) {
             throw new IllegalArgumentException("Количество не может быть больше, чем доступно на складе");

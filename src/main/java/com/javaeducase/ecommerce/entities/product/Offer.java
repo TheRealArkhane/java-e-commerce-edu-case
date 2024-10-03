@@ -10,7 +10,6 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@ToString
 @Table(name = "offers")
 public class Offer {
 

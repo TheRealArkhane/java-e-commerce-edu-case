@@ -8,7 +8,6 @@ import lombok.*;
 @Getter
 @Setter
 @EqualsAndHashCode
-@ToString
 @Table(name = "app_users")
 public class User {
     @Id
@@ -35,11 +34,11 @@ public class User {
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "cart_id", referencedColumnName = "id")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Cart cart;
 
     public User() {
-        this.cart = new Cart(); // инициализация пустой корзины при создании пользователя
+        this.cart = new Cart();
+        this.cart.setUser(this);
     }
 }

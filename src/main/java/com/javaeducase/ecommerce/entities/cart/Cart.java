@@ -12,7 +12,6 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@ToString
 @Table(name = "carts")
 public class Cart {
 
@@ -30,7 +29,8 @@ public class Cart {
     @Column(name = "total_quantity")
     private int totalQuantity;
 
-    @OneToOne(mappedBy = "cart", cascade = CascadeType.ALL)
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
 
