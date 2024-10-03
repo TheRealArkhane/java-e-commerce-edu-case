@@ -87,7 +87,7 @@ public class AdminOfferService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public OfferDTO addAttributeToOffer(Long offerId, Long attributeId) {
+    public OfferDTO addAttributeToOffer(Long offerId, Long attributeId) { //TODO: Replace with AttributeDTO
         Offer offer = getOfferByIdCheckIsDeleted(offerId);
         Attribute attribute = attributeRepository.findById(attributeId)
                 .orElseThrow(() -> new AttributeNotFoundException("Атрибут с id: " + attributeId + " не найден"));
@@ -99,7 +99,7 @@ public class AdminOfferService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public OfferDTO deleteAttributeFromOffer(Long offerId, Long attributeId) {
+    public OfferDTO deleteAttributeFromOffer(Long offerId, Long attributeId) { //TODO: Replace with AttributeDTO
         Offer offer = getOfferByIdCheckIsDeleted(offerId);
         Attribute attribute = attributeRepository.findById(attributeId)
                 .orElseThrow(() -> new AttributeNotFoundException("Атрибут с id: " + attributeId + " не найден"));

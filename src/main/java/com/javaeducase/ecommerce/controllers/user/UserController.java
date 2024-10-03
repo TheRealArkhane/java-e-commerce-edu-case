@@ -1,10 +1,9 @@
 package com.javaeducase.ecommerce.controllers.user;
 
-import com.javaeducase.ecommerce.dto.user.ChangePasswordRequest;
+import com.javaeducase.ecommerce.dto.user.ChangePasswordRequestDTO;
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.services.user.UserService;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +27,7 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<UserDTO> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authentication.getName(); // Получаем email текущего пользователя
+        String currentUserEmail = authentication.getName();
         UserDTO userDTO = userService.getUserByEmail(currentUserEmail);
         return ResponseEntity.ok(userDTO);
     }
@@ -40,7 +39,7 @@ public class UserController {
     }
 
     @DeleteMapping("/me")
-    public ResponseEntity<Map<String, String>> deleteCurrentUser(HttpServletResponse response) {
+    public ResponseEntity<Map<String, String>> deleteCurrentUser() {
         userService.deleteCurrentUser();
         SecurityContextHolder.getContext().setAuthentication(null);
         Map<String, String> responseBody = new HashMap<>();
@@ -49,7 +48,7 @@ public class UserController {
     }
 
     @PutMapping("/me/change_password")
-    public ResponseEntity<Map<String, String>> changePassword(@RequestBody ChangePasswordRequest request) {
+    public ResponseEntity<Map<String, String>> changePassword(@RequestBody ChangePasswordRequestDTO request) {
         userService.changePassword(request, passwordEncoder);
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", "Пароль успешно изменен");

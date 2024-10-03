@@ -82,7 +82,7 @@ public class AdminProductService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public ProductDTO addOfferToProduct(Long productId, Long offerId) {
+    public ProductDTO addOfferToProduct(Long productId, Long offerId) { //TODO: Replace with OfferDTO
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException("Товар с id: " + productId + " не найден"));
 

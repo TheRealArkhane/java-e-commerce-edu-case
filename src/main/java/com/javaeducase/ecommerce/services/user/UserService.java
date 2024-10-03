@@ -1,6 +1,6 @@
 package com.javaeducase.ecommerce.services.user;
 
-import com.javaeducase.ecommerce.dto.user.ChangePasswordRequest;
+import com.javaeducase.ecommerce.dto.user.ChangePasswordRequestDTO;
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.entities.user.User;
 import com.javaeducase.ecommerce.exceptions.user.UserIsDeletedException;
@@ -54,9 +54,9 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    public void changePassword(ChangePasswordRequest changePasswordRequest, PasswordEncoder passwordEncoder) {
-        String oldPassword = changePasswordRequest.getOldPassword();
-        String newPassword = changePasswordRequest.getNewPassword();
+    public void changePassword(ChangePasswordRequestDTO changePasswordRequestDTO, PasswordEncoder passwordEncoder) {
+        String oldPassword = changePasswordRequestDTO.getOldPassword();
+        String newPassword = changePasswordRequestDTO.getNewPassword();
         User currentUser = getCurrentUser();
         if (currentUser.isDeleted()) {
             throw new UserIsDeletedException("Пользователь ранее был удален");

@@ -1,16 +1,14 @@
 package com.javaeducase.ecommerce.controllers.user;
 
-import com.javaeducase.ecommerce.dto.user.ChangePasswordRequest;
+import com.javaeducase.ecommerce.dto.user.ChangePasswordRequestDTO;
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.services.user.AdminUserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +56,7 @@ public class AdminUserController {
     @PutMapping("/{id}/change_password")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> changeUserPassword(@PathVariable Long id,
-                                                                  @RequestBody ChangePasswordRequest request) {
+                                                                  @RequestBody ChangePasswordRequestDTO request) {
         adminUserService.changeUserPassword(id, request, passwordEncoder);
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", "Пароль успешно изменен");
