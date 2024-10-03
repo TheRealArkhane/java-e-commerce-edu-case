@@ -1,5 +1,6 @@
 package com.javaeducase.ecommerce.services.user;
 
+import com.javaeducase.ecommerce.dto.user.ChangePasswordRequest;
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.entities.user.User;
 import com.javaeducase.ecommerce.exceptions.user.InsufficientAdminPrivilegesException;
@@ -27,7 +28,14 @@ public class AdminUserService {
                 .collect(Collectors.toList());
     }
 
-    public void changePassword(Long id, String oldPassword, String newPassword, PasswordEncoder passwordEncoder) {
+    public UserDTO getUserById(Long id) {
+        return userUtils.convertToDTO(userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден")));
+    }
+
+    public void changeUserPassword(Long id, ChangePasswordRequest request, PasswordEncoder passwordEncoder) {
+        String oldPassword = request.getOldPassword();
+        String newPassword = request.getNewPassword();
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
         if (user.isDeleted()) {

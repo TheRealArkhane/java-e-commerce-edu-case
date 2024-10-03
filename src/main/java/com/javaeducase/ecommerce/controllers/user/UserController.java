@@ -1,5 +1,6 @@
 package com.javaeducase.ecommerce.controllers.user;
 
+import com.javaeducase.ecommerce.dto.user.ChangePasswordRequest;
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.services.user.UserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -49,15 +50,9 @@ public class UserController {
 
     @PutMapping("/me/change_password")
     public ResponseEntity<Map<String, String>> changePassword(@RequestBody ChangePasswordRequest request) {
-        userService.changePassword(request.getOldPassword(), request.getNewPassword(), passwordEncoder);
+        userService.changePassword(request, passwordEncoder);
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", "Пароль успешно изменен");
         return ResponseEntity.ok(responseBody);
-    }
-
-    @Getter
-    public static class ChangePasswordRequest {
-        private String oldPassword;
-        private String newPassword;
     }
 }

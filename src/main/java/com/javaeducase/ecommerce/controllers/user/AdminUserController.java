@@ -1,11 +1,13 @@
 package com.javaeducase.ecommerce.controllers.user;
 
+import com.javaeducase.ecommerce.dto.user.ChangePasswordRequest;
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.services.user.AdminUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
@@ -19,6 +21,7 @@ import java.util.Map;
 public class AdminUserController {
 
     private final AdminUserService adminUserService;
+    private final PasswordEncoder passwordEncoder;
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -27,11 +30,17 @@ public class AdminUserController {
         return ResponseEntity.ok(users);
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id) {
+        return ResponseEntity.ok(adminUserService.getUserById(id));
+    }
+
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDTO> updateUser(
             @PathVariable Long id,
-            @RequestBody UserDTO userDTO) throws AccessDeniedException {
+            @RequestBody UserDTO userDTO) {
         UserDTO updatedUser = adminUserService.updateUser(id, userDTO);
         return ResponseEntity.ok(updatedUser);
     }
@@ -43,6 +52,16 @@ public class AdminUserController {
         adminUserService.deleteUser(id);
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", "Пользователь успешно удален");
+        return ResponseEntity.ok(responseBody);
+    }
+
+    @PutMapping("/{id}/change_password")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, String>> changeUserPassword(@PathVariable Long id,
+                                                                  @RequestBody ChangePasswordRequest request) {
+        adminUserService.changeUserPassword(id, request, passwordEncoder);
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("message", "Пароль успешно изменен");
         return ResponseEntity.ok(responseBody);
     }
 }
