@@ -37,6 +37,7 @@ public class OrderUtils {
         orderDTO.setDelivery(convertDeliveryToDeliveryDTO(order.getDelivery()));
         orderDTO.setPayment(convertPaymentToPaymentDTO(order.getPayment()));
         orderDTO.setOrderCreateDateTime(order.getOrderCreateDateTime());
+        orderDTO.setTotalQuantity(order.getTotalQuantity());
         orderDTO.setTotalAmount(order.getTotalAmount());
         return orderDTO;
     }

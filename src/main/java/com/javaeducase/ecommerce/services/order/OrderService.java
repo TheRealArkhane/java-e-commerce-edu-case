@@ -67,7 +67,8 @@ public class OrderService {
             throw new IllegalArgumentException("Selected payment method is not valid for this delivery");
         }
 
-        String orderAddress;
+        Order order = new Order();
+        order.setUser(currentUser);
         if (address == null || address.isEmpty()) {
             throw new IllegalArgumentException("Address is required for courier delivery");
         }
@@ -75,19 +76,11 @@ public class OrderService {
             if (!pickupLocationRepository.findByAddress(address).isPresent()) {
                 throw new IllegalArgumentException("Такого пункта самовывоза нет");
             }
-            else {
-                orderAddress = address;
-            }
+            order.setAddress(address);
         }
         else {
-            throw new IllegalArgumentException("Invalid delivery method");
+            order.setAddress(address);
         }
-
-
-
-        Order order = new Order();
-        order.setUser(currentUser);
-        order.setAddress(orderAddress);
 
         for (CartItem cartItem : cart.getItems()) {
             OrderDetail orderDetail = new OrderDetail();
@@ -101,6 +94,7 @@ public class OrderService {
 
         order.setDelivery(delivery);
         order.setPayment(payment);
+        order.setTotalQuantity(cart.getTotalQuantity());
         order.setTotalAmount(cart.getTotalAmount() + delivery.getDeliveryPrice());
         orderRepository.save(order);
 
