@@ -21,13 +21,11 @@ public class AdminCartController {
     private final AdminCartService adminCartService;
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CartDTO> getUserCartById(@PathVariable Long id) {
         return ResponseEntity.ok(adminCartService.getUserCart(id));
     }
 
     @PostMapping("/{id}/calculate")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CartDTO> updateUserCart(@PathVariable Long id,
                                                   @RequestBody RequestCartItemDTO requestCartItemDTO) {
         CartDTO cartDTO = cartService.calculateCart(id, requestCartItemDTO);
@@ -35,7 +33,6 @@ public class AdminCartController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> deleteUserCart(@PathVariable Long id) {
         adminCartService.clearUserCart(id);
         Map<String, String> responseBody = new HashMap<>();

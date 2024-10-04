@@ -14,14 +14,12 @@ public class AdminAttributeController {
 
     private final AdminAttributeService adminAttributeService;
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<AttributeDTO> createAttribute(@RequestBody AttributeDTO attributeDTO) {
         AttributeDTO createdAttribute = adminAttributeService.createAttribute(attributeDTO);
         return ResponseEntity.ok(createdAttribute);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<AttributeDTO> updateAttribute(
             @PathVariable Long id,

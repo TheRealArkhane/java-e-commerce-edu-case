@@ -30,7 +30,6 @@ public class AdminProductService {
     private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
 
 
-    @PreAuthorize("hasRole('ADMIN')")
     public ProductDTO createProduct(ProductDTO productDTO) {
         Category category = categoryRepository.findById(productDTO.getCategory().getId())
                 .orElseThrow(() -> new IllegalArgumentException("Категория не найдена"));
@@ -46,7 +45,6 @@ public class AdminProductService {
         return productUtils.convertProductToProductDTO(savedProduct);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public ProductDTO updateProduct(Long id, ProductDTO productDTO) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Товар с id: " + id + " не найден"));
@@ -65,7 +63,6 @@ public class AdminProductService {
         return productUtils.convertProductToProductDTO(updatedProduct);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Товар с id: " + id + " не найден"));
@@ -81,23 +78,22 @@ public class AdminProductService {
         productRepository.save(product);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    public ProductDTO addOfferToProduct(Long productId, Long offerId) { //TODO: Replace with OfferDTO
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException("Товар с id: " + productId + " не найден"));
-
-        if (product.getIsDeleted()) {
-            throw new ProductIsDeletedException("Товар был ранее удален");
-        }
-
-        Offer offer = offerRepository.findById(offerId)
-                .orElseThrow(() -> new OfferNotFoundException("Предложение с id: " + offerId + " не найдено"));
-
-        if (offer.getIsDeleted()) {
-            throw new OfferIsDeletedException("Предложение с id: " + offer.getId() + " было ранее удалено");
-        }
-        offer.setProduct(product);
-        offerRepository.save(offer);
-        return productUtils.convertProductToProductDTO(productRepository.save(product));
-    }
+//    public ProductDTO addOfferToProduct(Long productId, Long offerId) { //TODO: Replace with OfferDTO
+//        Product product = productRepository.findById(productId)
+//                .orElseThrow(() -> new ProductNotFoundException("Товар с id: " + productId + " не найден"));
+//
+//        if (product.getIsDeleted()) {
+//            throw new ProductIsDeletedException("Товар был ранее удален");
+//        }
+//
+//        Offer offer = offerRepository.findById(offerId)
+//                .orElseThrow(() -> new OfferNotFoundException("Предложение с id: " + offerId + " не найдено"));
+//
+//        if (offer.getIsDeleted()) {
+//            throw new OfferIsDeletedException("Предложение с id: " + offer.getId() + " было ранее удалено");
+//        }
+//        offer.setProduct(product);
+//        offerRepository.save(offer);
+//        return productUtils.convertProductToProductDTO(productRepository.save(product));
+//    }
 }

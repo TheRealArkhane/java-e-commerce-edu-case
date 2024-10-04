@@ -19,21 +19,18 @@ public class AdminCategoryController {
     private final AdminCategoryService adminCategoryService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO categoryDTO) {
         CategoryDTO createdCategory = adminCategoryService.createCategory(categoryDTO);
         return ResponseEntity.ok(createdCategory);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryDTO> updateCategory(@PathVariable Long id, @RequestBody CategoryDTO categoryDTO) {
         CategoryDTO updatedCategory = adminCategoryService.updateCategory(id, categoryDTO);
         return ResponseEntity.ok(updatedCategory);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> deleteCategory(@PathVariable Long id) {
         adminCategoryService.deleteCategory(id);
         Map<String, String> responseBody = new HashMap<>();

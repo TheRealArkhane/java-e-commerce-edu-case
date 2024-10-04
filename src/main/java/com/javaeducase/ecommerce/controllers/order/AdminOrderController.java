@@ -5,20 +5,21 @@ import com.javaeducase.ecommerce.services.order.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin/orders")
+@RequestMapping("/admin/user_orders")
 @RequiredArgsConstructor
 public class AdminOrderController {
 
     private final OrderService orderService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<List<OrderDTO>> getUserOrders(Long userId) {
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<OrderDTO>> getUserOrders(@PathVariable Long userId) {
         List<OrderDTO> orders = orderService.getUserOrders(userId);
         return ResponseEntity.ok(orders);
     }

@@ -17,14 +17,12 @@ public class AdminAttributeService {
     private final AttributeRepository attributeRepository;
     private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
 
-    @PreAuthorize("hasRole('ADMIN')")
     public AttributeDTO createAttribute(AttributeDTO attributeDTO) {
         Attribute attribute = commonAllProductLinkedUtils.convertAttributeDTOToAttribute(attributeDTO);
         Attribute savedAttribute = attributeRepository.save(attribute);
         return commonAllProductLinkedUtils.convertAttributeToAttributeDTO(savedAttribute);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public AttributeDTO updateAttribute(Long id, AttributeDTO attributeDTO) {
         Attribute attribute = attributeRepository.findById(id)
                 .orElseThrow(() -> new AttributeNotFoundException("јтрибут с id: " + id + " не найден"));

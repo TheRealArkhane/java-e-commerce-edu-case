@@ -55,11 +55,9 @@ public class OrderService {
             throw new IllegalArgumentException("Cart is empty, cannot create order");
         }
 
-        // Получаем информацию о доставке и проверяем валидность
         Delivery delivery = deliveryRepository.findById(deliveryId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid delivery method"));
 
-        // Проверяем валидность метода оплаты
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid payment method"));
 

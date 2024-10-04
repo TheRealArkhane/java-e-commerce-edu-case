@@ -21,7 +21,6 @@ public class AdminCategoryService {
     private final ProductRepository productRepository;
     private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
 
-    @PreAuthorize("hasRole('ADMIN')")
     public CategoryDTO updateCategory(Long id, CategoryDTO categoryDTO) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException("Категория с id: " + id + " не найдена"));
@@ -31,7 +30,6 @@ public class AdminCategoryService {
         return commonAllProductLinkedUtils.convertCategoryToCategoryDTO(category);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
         Category newCategory = new Category();
         newCategory.setName(categoryDTO.getName());
@@ -51,7 +49,6 @@ public class AdminCategoryService {
         return commonAllProductLinkedUtils.convertCategoryToCategoryDTO(newCategory);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public void deleteCategory(Long id) {
 
         Category category = categoryRepository.findById(id)

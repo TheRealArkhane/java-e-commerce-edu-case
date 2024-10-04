@@ -22,20 +22,17 @@ public class AdminUserController {
     private final PasswordEncoder passwordEncoder;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<UserDTO> users = adminUserService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDTO> updateUser(@PathVariable Long id) {
         return ResponseEntity.ok(adminUserService.getUserById(id));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDTO> updateUser(
             @PathVariable Long id,
             @RequestBody UserDTO userDTO) {
@@ -44,7 +41,6 @@ public class AdminUserController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> deleteUser(@PathVariable Long id) {
 
         adminUserService.deleteUser(id);
@@ -54,7 +50,6 @@ public class AdminUserController {
     }
 
     @PutMapping("/{id}/change_password")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> changeUserPassword(@PathVariable Long id,
                                                                   @RequestBody ChangePasswordRequestDTO request) {
         adminUserService.changeUserPassword(id, request, passwordEncoder);
