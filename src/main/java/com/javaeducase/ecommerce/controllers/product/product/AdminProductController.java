@@ -19,7 +19,6 @@ import java.util.Map;
 public class AdminProductController {
 
     private final AdminProductService adminProductService;
-    private final AdminOfferService adminOfferService;
 
 
     @PostMapping

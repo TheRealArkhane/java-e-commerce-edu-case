@@ -11,6 +11,8 @@ import com.javaeducase.ecommerce.entities.order.Payment;
 import com.javaeducase.ecommerce.entities.product.Offer;
 import com.javaeducase.ecommerce.entities.user.User;
 import com.javaeducase.ecommerce.exceptions.cart.CartNotFoundException;
+import com.javaeducase.ecommerce.exceptions.order.DeliveryNotFoundException;
+import com.javaeducase.ecommerce.exceptions.order.PaymentNotFoundException;
 import com.javaeducase.ecommerce.repositories.cart.CartRepository;
 import com.javaeducase.ecommerce.repositories.order.DeliveryRepository;
 import com.javaeducase.ecommerce.repositories.order.OrderRepository;
@@ -49,26 +51,26 @@ public class OrderService {
         User currentUser = userService.getCurrentUser();
 
         Cart cart = cartRepository.findByUserId(currentUser.getId())
-                .orElseThrow(() -> new CartNotFoundException("User cart not found"));
+                .orElseThrow(() -> new CartNotFoundException("У пользователя отсутствует корзина"));
 
         if (cart.getItems().isEmpty()) {
-            throw new IllegalArgumentException("Cart is empty, cannot create order");
+            throw new IllegalArgumentException("Корзина пуста, необходимо заполнить ее товаром");
         }
 
         Delivery delivery = deliveryRepository.findById(deliveryId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid delivery method"));
+                .orElseThrow(() -> new DeliveryNotFoundException("Не найден способ доставки с id: " + deliveryId));
 
         Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid payment method"));
+                .orElseThrow(() -> new PaymentNotFoundException("Не найден способ доставки с id: " + paymentId));
 
         if (!delivery.getPayments().contains(payment)) {
-            throw new IllegalArgumentException("Selected payment method is not valid for this delivery");
+            throw new IllegalArgumentException("Выбранный способ оплаты недопустим для выбранного способа доставки");
         }
 
         Order order = new Order();
         order.setUser(currentUser);
         if (address == null || address.isEmpty()) {
-            throw new IllegalArgumentException("Address is required for courier delivery");
+            throw new IllegalArgumentException("Необходимо ввести адрес");
         }
         else if (delivery.getId().equals(1L)) {
             if (!pickupLocationRepository.findByAddress(address).isPresent()) {

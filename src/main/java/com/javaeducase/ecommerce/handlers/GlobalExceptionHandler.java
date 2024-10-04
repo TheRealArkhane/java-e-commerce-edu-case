@@ -2,6 +2,8 @@ package com.javaeducase.ecommerce.handlers;
 
 import com.javaeducase.ecommerce.exceptions.cart.CartItemNotFoundException;
 import com.javaeducase.ecommerce.exceptions.cart.CartNotFoundException;
+import com.javaeducase.ecommerce.exceptions.order.DeliveryNotFoundException;
+import com.javaeducase.ecommerce.exceptions.order.PaymentNotFoundException;
 import com.javaeducase.ecommerce.exceptions.product.*;
 import com.javaeducase.ecommerce.exceptions.user.IdenticalPasswordException;
 import com.javaeducase.ecommerce.exceptions.user.InsufficientAdminPrivilegesException;
@@ -97,6 +99,18 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CartNotFoundException.class)
     public ResponseEntity<CustomErrorResponse> handleCartNotFoundExceptions(CartItemNotFoundException ex) {
+        CustomErrorResponse errorResponse = new CustomErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DeliveryNotFoundException.class)
+    public ResponseEntity<CustomErrorResponse> handleDeliveryNotFoundExceptions(DeliveryNotFoundException ex) {
+        CustomErrorResponse errorResponse = new CustomErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(PaymentNotFoundException.class)
+    public ResponseEntity<CustomErrorResponse> handlePaymentNotFoundExceptions(PaymentNotFoundException ex) {
         CustomErrorResponse errorResponse = new CustomErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value());
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }

@@ -2,6 +2,7 @@ package com.javaeducase.ecommerce.services.order;
 
 import com.javaeducase.ecommerce.entities.order.Delivery;
 import com.javaeducase.ecommerce.entities.order.PickupLocation;
+import com.javaeducase.ecommerce.exceptions.order.DeliveryNotFoundException;
 import com.javaeducase.ecommerce.repositories.order.DeliveryRepository;
 import com.javaeducase.ecommerce.repositories.order.PickupLocationRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class DeliveryService {
 
     public Delivery findById(Long id) {
         return deliveryRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("No delivery found with id: " + id));
+                .orElseThrow(() -> new DeliveryNotFoundException("Не найден способ доставки с id: " + id));
     }
 
     public List<PickupLocation> getPickupLocations() {
