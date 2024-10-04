@@ -1,12 +1,13 @@
 package com.javaeducase.ecommerce.entities.order;
 
-import com.javaeducase.ecommerce.entities.cart.Cart;
 import com.javaeducase.ecommerce.entities.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -23,9 +24,8 @@ public class Order {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "cart_id", nullable = false)
-    private Cart cart;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderDetail> orderDetails = new ArrayList<>();
 
     @Column(name = "address", nullable = false)
     private String address;
@@ -41,7 +41,10 @@ public class Order {
     @Column(name = "order_create_date_time", nullable = false)
     private LocalDateTime orderCreateDateTime;
 
-    @Column(name = "total_amount", nullable = false)
+    @Column(name = "total_quantity")
+    private int totalQuantity;
+
+    @Column(name = "total_amount")
     private int totalAmount;
 
     @PrePersist

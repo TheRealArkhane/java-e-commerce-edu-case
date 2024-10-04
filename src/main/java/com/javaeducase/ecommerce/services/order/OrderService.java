@@ -3,8 +3,10 @@ package com.javaeducase.ecommerce.services.order;
 import com.javaeducase.ecommerce.dto.order.OrderDTO;
 import com.javaeducase.ecommerce.dto.order.RequestOrderDTO;
 import com.javaeducase.ecommerce.entities.cart.Cart;
+import com.javaeducase.ecommerce.entities.cart.CartItem;
 import com.javaeducase.ecommerce.entities.order.Delivery;
 import com.javaeducase.ecommerce.entities.order.Order;
+import com.javaeducase.ecommerce.entities.order.OrderDetail;
 import com.javaeducase.ecommerce.entities.order.Payment;
 import com.javaeducase.ecommerce.entities.product.Offer;
 import com.javaeducase.ecommerce.entities.user.User;
@@ -13,6 +15,7 @@ import com.javaeducase.ecommerce.repositories.cart.CartRepository;
 import com.javaeducase.ecommerce.repositories.order.DeliveryRepository;
 import com.javaeducase.ecommerce.repositories.order.OrderRepository;
 import com.javaeducase.ecommerce.repositories.order.PaymentRepository;
+import com.javaeducase.ecommerce.repositories.order.PickupLocationRepository;
 import com.javaeducase.ecommerce.repositories.product.OfferRepository;
 import com.javaeducase.ecommerce.services.cart.CartService;
 import com.javaeducase.ecommerce.services.user.UserService;
@@ -32,6 +35,7 @@ public class OrderService {
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
     private final OfferRepository offerRepository;
+    private final PickupLocationRepository pickupLocationRepository;
     private final UserService userService;
     private final CartService cartService;
     private final OrderUtils orderUtils;
@@ -67,8 +71,8 @@ public class OrderService {
         if (address == null || address.isEmpty()) {
             throw new IllegalArgumentException("Address is required for courier delivery");
         }
-        else if (delivery.getId().equals(1)) {
-            if (!delivery.getPickupLocations().contains(address)) {
+        else if (delivery.getId().equals(1L)) {
+            if (!pickupLocationRepository.findByAddress(address).isPresent()) {
                 throw new IllegalArgumentException("Такого пункта самовывоза нет");
             }
             else {
@@ -79,13 +83,25 @@ public class OrderService {
             throw new IllegalArgumentException("Invalid delivery method");
         }
 
+
+
         Order order = new Order();
         order.setUser(currentUser);
-        order.setCart(cart);
         order.setAddress(orderAddress);
+
+        for (CartItem cartItem : cart.getItems()) {
+            OrderDetail orderDetail = new OrderDetail();
+            orderDetail.setOrder(order);
+            orderDetail.setOffer(cartItem.getOffer());
+            orderDetail.setQuantity(cartItem.getQuantity());
+            orderDetail.setTotalOfferAmount(cartItem.getTotalPrice());
+
+            order.getOrderDetails().add(orderDetail);
+        }
+
         order.setDelivery(delivery);
         order.setPayment(payment);
-        order.setTotalAmount(cart.getTotalAmount());
+        order.setTotalAmount(cart.getTotalAmount() + delivery.getDeliveryPrice());
         orderRepository.save(order);
 
         cart.getItems().forEach(cartItem -> {

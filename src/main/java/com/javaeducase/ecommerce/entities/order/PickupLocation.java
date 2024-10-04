@@ -1,5 +1,6 @@
 package com.javaeducase.ecommerce.entities.order;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,5 +25,6 @@ public class PickupLocation {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "delivery_id", nullable = false)
+    @JsonBackReference
     private Delivery delivery;
 }

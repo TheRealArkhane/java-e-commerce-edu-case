@@ -1,21 +1,22 @@
 package com.javaeducase.ecommerce.dto.order;
 
-import com.javaeducase.ecommerce.dto.cart.CartDTO;
-import com.javaeducase.ecommerce.entities.order.Delivery;
-import com.javaeducase.ecommerce.entities.order.Payment;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
 public class OrderDTO {
     private Long id;
-    private CartDTO cart;
+    @JsonProperty("orderDetails")
+    private List<OrderDetailDTO> orderDetailDTO;
     private String address;
-    private Delivery delivery;
-    private Payment payment;
+    private DeliveryDTO delivery;
+    private PaymentDTO payment;
     private LocalDateTime orderCreateDateTime;
+    private int totalQuantity;
     private int totalAmount;
 }

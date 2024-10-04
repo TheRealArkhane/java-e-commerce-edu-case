@@ -1,5 +1,6 @@
 package com.javaeducase.ecommerce.entities.order;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,8 +25,10 @@ public class Delivery {
     private int deliveryPrice;
 
     @OneToMany(mappedBy = "delivery", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Payment> payments;
 
     @OneToMany(mappedBy = "delivery", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<PickupLocation> pickupLocations;
 }
