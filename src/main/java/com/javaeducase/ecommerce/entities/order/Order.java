@@ -5,53 +5,47 @@ import com.javaeducase.ecommerce.entities.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
-@ToString
 @Table(name = "orders")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    Long id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    User user;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart;
 
-    @Column(name = "address")
-    String address;
+    @Column(name = "address", nullable = false)
+    private String address;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "delivery_method", nullable = false)
-    DeliveryMethod deliveryMethod;
+    @ManyToOne
+    @JoinColumn(name = "delivery_id", nullable = false)
+    private Delivery delivery;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "payment_method", nullable = false)
-    private PaymentMethod paymentMethod;
-
-    @Column(name = "delivery_price")
-    int deliveryPrice;
+    @ManyToOne
+    @JoinColumn(name = "payment_id", nullable = false)
+    private Payment payment;
 
     @Column(name = "order_create_date_time", nullable = false)
-    LocalDateTime orderCreateDateTime;
+    private LocalDateTime orderCreateDateTime;
 
-    @Column(name = "final_price")
-    int finalPrice = 0;
+    @Column(name = "total_amount", nullable = false)
+    private int totalAmount;
 
     @PrePersist
     protected void onCreate() {
-        orderCreateDateTime = LocalDateTime.now();
-        deliveryPrice = deliveryMethod != null ? deliveryMethod.getPrice() : 0;
+        this.orderCreateDateTime = LocalDateTime.now();
     }
 }

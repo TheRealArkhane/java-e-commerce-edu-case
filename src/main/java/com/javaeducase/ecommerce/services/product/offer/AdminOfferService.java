@@ -45,7 +45,7 @@ public class AdminOfferService {
             newOffer.setIsAvailable(true);
         } else {
             newOffer.setIsAvailable(false);
-            newOffer.setStockQuantity(offerDTO.getStockQuantity());
+            newOffer.setStockQuantity(0);
         }
         if (offerDTO.getAttributes() != null) {
             newOffer.setAttributes(offerDTO.getAttributes()
