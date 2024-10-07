@@ -1,6 +1,6 @@
 package com.javaeducase.ecommerce.config;
 
-import com.javaeducase.ecommerce.services.user.UserService;
+import com.javaeducase.ecommerce.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
