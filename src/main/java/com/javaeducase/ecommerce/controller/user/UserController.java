@@ -20,7 +20,6 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
     
 
     @GetMapping("/me")
@@ -48,7 +47,7 @@ public class UserController {
 
     @PutMapping("/me/change_password")
     public ResponseEntity<Map<String, String>> changePassword(@RequestBody ChangePasswordRequestDTO request) {
-        userService.changePassword(request, passwordEncoder);
+        userService.changePassword(request);
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", "Пароль успешно изменен");
         return ResponseEntity.ok(responseBody);

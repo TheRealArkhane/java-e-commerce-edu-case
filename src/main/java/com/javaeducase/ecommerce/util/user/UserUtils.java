@@ -4,6 +4,7 @@ import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.entity.user.User;
 import com.javaeducase.ecommerce.exception.user.IdenticalPasswordException;
 import com.javaeducase.ecommerce.repository.user.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 public class UserUtils {
 
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
     private static final String EMAIL_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$";
 
     public void validateEmail(String email) {
@@ -27,7 +29,7 @@ public class UserUtils {
         }
     }
 
-    public void checkPasswords(String oldPassword, String newPassword, String storedPassword, PasswordEncoder passwordEncoder) {
+    public void checkPasswords(String oldPassword, String newPassword, String storedPassword) {
         if (!passwordEncoder.matches(oldPassword, storedPassword)) {
             throw new IllegalArgumentException("Старый пароль неверен");
         }

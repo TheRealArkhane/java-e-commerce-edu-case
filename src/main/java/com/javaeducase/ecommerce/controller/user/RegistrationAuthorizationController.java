@@ -18,11 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class RegistrationAuthorizationController {
 
     private final RegistrationService registrationService;
-    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
     public ResponseEntity<UserDTO> registerUser(@RequestBody RegistrationDTO registrationDTO) {
-        UserDTO newUser = registrationService.registerUser(registrationDTO, passwordEncoder);
+        UserDTO newUser = registrationService.registerUser(registrationDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
     }
 }

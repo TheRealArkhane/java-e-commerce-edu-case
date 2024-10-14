@@ -5,6 +5,7 @@ import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.service.user.AdminUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,6 @@ import java.util.Map;
 public class AdminUserController {
 
     private final AdminUserService adminUserService;
-    private final PasswordEncoder passwordEncoder;
 
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllUsers() {
@@ -51,7 +51,7 @@ public class AdminUserController {
     @PutMapping("/{id}/change_password")
     public ResponseEntity<Map<String, String>> changeUserPassword(@PathVariable Long id,
                                                                   @RequestBody ChangePasswordRequestDTO request) {
-        adminUserService.changeUserPassword(id, request, passwordEncoder);
+        adminUserService.changeUserPassword(id, request);
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", "Пароль успешно изменен");
         return ResponseEntity.ok(responseBody);

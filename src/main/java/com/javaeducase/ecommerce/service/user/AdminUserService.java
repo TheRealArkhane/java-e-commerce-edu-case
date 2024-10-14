@@ -9,6 +9,7 @@ import com.javaeducase.ecommerce.exception.user.UserNotFoundException;
 import com.javaeducase.ecommerce.repository.user.UserRepository;
 import com.javaeducase.ecommerce.util.user.UserUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,8 @@ import java.util.stream.Collectors;
 public class AdminUserService {
 
     private final UserRepository userRepository;
-    private final UserUtils userUtils; // Add this
+    private final UserUtils userUtils;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream()
@@ -33,7 +35,7 @@ public class AdminUserService {
                 .orElseThrow(() -> new UserNotFoundException("Пользователь не найден")));
     }
 
-    public void changeUserPassword(Long id, ChangePasswordRequestDTO request, PasswordEncoder passwordEncoder) {
+    public void changeUserPassword(Long id, ChangePasswordRequestDTO request) {
         String oldPassword = request.getOldPassword();
         String newPassword = request.getNewPassword();
         User user = userRepository.findById(id)
@@ -44,7 +46,7 @@ public class AdminUserService {
         if (user.getRole().name().equals("ADMIN")) {
             throw new InsufficientAdminPrivilegesException("Администратор не может изменять данные другого администратора");
         }
-        userUtils.checkPasswords(oldPassword, newPassword, user.getPassword(), passwordEncoder);
+        userUtils.checkPasswords(oldPassword, newPassword, user.getPassword());
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }

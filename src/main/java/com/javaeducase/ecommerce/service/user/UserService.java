@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final UserUtils userUtils;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -54,14 +56,14 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    public void changePassword(ChangePasswordRequestDTO changePasswordRequestDTO, PasswordEncoder passwordEncoder) {
+    public void changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) {
         String oldPassword = changePasswordRequestDTO.getOldPassword();
         String newPassword = changePasswordRequestDTO.getNewPassword();
         User currentUser = getCurrentUser();
         if (currentUser.isDeleted()) {
             throw new UserIsDeletedException("Пользователь ранее был удален");
         }
-        userUtils.checkPasswords(oldPassword, newPassword, currentUser.getPassword(), passwordEncoder);
+        userUtils.checkPasswords(oldPassword, newPassword, currentUser.getPassword());
         currentUser.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(currentUser);
     }
