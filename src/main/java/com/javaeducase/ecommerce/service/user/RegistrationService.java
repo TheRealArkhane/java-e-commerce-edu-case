@@ -16,11 +16,10 @@ import org.springframework.stereotype.Service;
 public class RegistrationService {
 
     private final UserRepository userRepository;
-    private final UserUtils userUtils;
     private final BCryptPasswordEncoder passwordEncoder;
 
     public UserDTO registerUser(RegistrationDTO registrationDTO) {
-        userUtils.validateEmail(registrationDTO.getEmail());
+        UserUtils.validateEmail(registrationDTO.getEmail());
         if (userRepository.findByEmail(registrationDTO.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Пользователь с таким email уже существует");
         }
@@ -32,6 +31,6 @@ public class RegistrationService {
         user.setRole(Role.USER);
         user.setDeleted(false);
         User savedUser = userRepository.save(user);
-        return userUtils.convertToDTO(savedUser);
+        return UserUtils.convertToDTO(savedUser);
     }
 }

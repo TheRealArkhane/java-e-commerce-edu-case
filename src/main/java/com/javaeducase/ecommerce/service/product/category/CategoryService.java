@@ -19,28 +19,25 @@ import java.util.stream.Collectors;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
-    private final ProductRepository productRepository;
-    private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
-    private final ProductUtils productUtils;
 
     public List<CategoryDTO> getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
         return categories.stream()
-                .map(commonAllProductLinkedUtils::convertCategoryToCategoryDTO)
+                .map(CommonAllProductLinkedUtils::convertCategoryToCategoryDTO)
                 .collect(Collectors.toList());
     }
 
     public CategoryDTO getCategoryById(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException("Категория с id: " + id + " не найдена"));
-        return commonAllProductLinkedUtils.convertCategoryToCategoryDTO(category);
+        return CommonAllProductLinkedUtils.convertCategoryToCategoryDTO(category);
     }
 
     public List<CategoryDTO> getCategoryChildren(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException("Категория с id: " + id + " не найдена"));
         return category.getChildren().stream()
-                .map(commonAllProductLinkedUtils::convertCategoryToCategoryDTO)
+                .map(CommonAllProductLinkedUtils::convertCategoryToCategoryDTO)
                 .collect(Collectors.toList());
     }
 
@@ -48,7 +45,7 @@ public class CategoryService {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException("Категория с id: " + id + " не найдена"));
         return category.getProducts().stream()
-                .map(productUtils::convertProductToProductDTO)
+                .map(ProductUtils::convertProductToProductDTO)
                 .collect(Collectors.toList());
     }
 }

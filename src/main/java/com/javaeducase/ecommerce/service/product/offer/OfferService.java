@@ -18,13 +18,12 @@ import java.util.List;
 public class OfferService {
 
     private final OfferRepository offerRepository;
-    private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
 
     public OfferDTO getOfferById(Long offerId) {
         Offer offer = offerRepository.findById(offerId)
                 .orElseThrow(() -> new OfferNotFoundException("Offer with id: " + offerId + " not found"));
 
-        return commonAllProductLinkedUtils.convertOfferToOfferDTO(offer);
+        return CommonAllProductLinkedUtils.convertOfferToOfferDTO(offer);
     }
 
     public List<AttributeDTO> getAttributesByOfferId(Long offerId) {
@@ -32,7 +31,7 @@ public class OfferService {
                 .orElseThrow(() -> new OfferNotFoundException("Оффер с id: " + offerId + " не найден")).getAttributes();
         List<AttributeDTO> attributesDTO = new ArrayList<>();
         for (Attribute attribute : attributes) {
-            attributesDTO.add(commonAllProductLinkedUtils.convertAttributeToAttributeDTO(attribute));
+            attributesDTO.add(CommonAllProductLinkedUtils.convertAttributeToAttributeDTO(attribute));
         }
         return attributesDTO;
     }

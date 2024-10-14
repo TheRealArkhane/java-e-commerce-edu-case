@@ -26,7 +26,6 @@ public class AdminOfferService {
     private final OfferRepository offerRepository;
     private final ProductRepository productRepository;
     private final AttributeRepository attributeRepository;
-    private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
 
     public OfferDTO createProductOffer(CreateOfferRequestDTO createOfferRequestDTO) {
         Offer newOffer = new Offer();
@@ -53,7 +52,7 @@ public class AdminOfferService {
         newOffer.setAttributes(new ArrayList<>());
         newOffer.setIsDeleted(false);
         offerRepository.save(newOffer);
-        return commonAllProductLinkedUtils.convertOfferToOfferDTO(newOffer);
+        return CommonAllProductLinkedUtils.convertOfferToOfferDTO(newOffer);
     }
 
     public OfferDTO updateOffer(Long offerId, OfferDTO offerDTO) {
@@ -79,7 +78,7 @@ public class AdminOfferService {
         }
 
         offerRepository.save(updatingOffer);
-        return commonAllProductLinkedUtils.convertOfferToOfferDTO(updatingOffer);
+        return CommonAllProductLinkedUtils.convertOfferToOfferDTO(updatingOffer);
     }
 
     public OfferDTO addAttributeToOffer(AttributeRequestDTO attributeRequestDTO) {
@@ -93,7 +92,7 @@ public class AdminOfferService {
         offer.getAttributes().add(attribute);
         Offer updatedOffer = offerRepository.save(offer);
 
-        return commonAllProductLinkedUtils.convertOfferToOfferDTO(updatedOffer);
+        return CommonAllProductLinkedUtils.convertOfferToOfferDTO(updatedOffer);
     }
 
     public OfferDTO deleteAttributeFromOffer(AttributeRequestDTO attributeRequestDTO) {
@@ -106,7 +105,7 @@ public class AdminOfferService {
 
         if (offer.getAttributes().remove(attribute)) {
             offerRepository.save(offer);
-            return commonAllProductLinkedUtils.convertOfferToOfferDTO(offer);
+            return CommonAllProductLinkedUtils.convertOfferToOfferDTO(offer);
         }
         else throw new AttributeNotFoundException("Атрибут с id: " + attributeId + " не найден в предложении с id: " + offerId);
     }

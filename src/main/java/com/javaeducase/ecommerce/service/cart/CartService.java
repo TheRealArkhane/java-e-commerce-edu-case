@@ -30,7 +30,6 @@ public class CartService {
     private final OfferRepository offerRepository;
     private final CartItemService cartItemService;
     private final UserService userService;
-    private final CartUtils cartUtils;
     private final UserRepository userRepository;
 
     public CartDTO calculateCart(Long userId, RequestCartItemDTO requestCartItemDTO) {
@@ -74,12 +73,12 @@ public class CartService {
         cart.setTotalAmount(cart.getTotalAmount());
         cart.setTotalQuantity(cart.getTotalQuantity());
         cartRepository.save(cart);
-        return cartUtils.convertCartToCartDTO(cart);
+        return CartUtils.convertCartToCartDTO(cart);
     }
 
     public CartDTO getCart() {
         Cart cart = findOrCreateCart();
-        return cartUtils.convertCartToCartDTO(cart);
+        return CartUtils.convertCartToCartDTO(cart);
     }
 
     public void clearCart() {

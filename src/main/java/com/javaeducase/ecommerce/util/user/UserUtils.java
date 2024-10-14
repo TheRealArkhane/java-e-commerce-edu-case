@@ -9,27 +9,23 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
 public class UserUtils {
 
-    private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
     private static final String EMAIL_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$";
 
-    public void validateEmail(String email) {
+    public static void validateEmail(String email) {
         if (email == null || !email.matches(EMAIL_REGEX)) {
             throw new IllegalArgumentException("Неправильный формат email");
         }
     }
 
-    public void checkEmailExists(String email) {
+    public static void checkEmailExists(String email, UserRepository userRepository) {
         if (userRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("Пользователь с таким email уже существует");
         }
     }
 
-    public void checkPasswords(String oldPassword, String newPassword, String storedPassword) {
+    public static void checkPasswords(String oldPassword, String newPassword, String storedPassword, BCryptPasswordEncoder passwordEncoder) {
         if (!passwordEncoder.matches(oldPassword, storedPassword)) {
             throw new IllegalArgumentException("Старый пароль неверен");
         }
@@ -38,7 +34,7 @@ public class UserUtils {
         }
     }
 
-    public UserDTO convertToDTO(User user) {
+    public static UserDTO convertToDTO(User user) {
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
         dto.setFirstName(user.getFirstName());

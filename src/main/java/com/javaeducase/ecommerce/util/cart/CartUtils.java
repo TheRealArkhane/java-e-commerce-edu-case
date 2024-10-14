@@ -10,25 +10,20 @@ import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
-@Component
-@RequiredArgsConstructor
 public class CartUtils {
 
-    private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
-
-
-    public CartDTO convertCartToCartDTO(Cart cart) {
+    public static CartDTO convertCartToCartDTO(Cart cart) {
         CartDTO cartDTO = new CartDTO();
-        cartDTO.setItems(cart.getItems().stream().map(this::convertCartItemToCartItemDTO).collect(Collectors.toList()));
+        cartDTO.setItems(cart.getItems().stream().map(CartUtils::convertCartItemToCartItemDTO).collect(Collectors.toList()));
         cartDTO.setTotalAmount(cart.getTotalAmount());
         cartDTO.setTotalQuantity(cart.getTotalQuantity());
         return cartDTO;
     }
 
 
-    private CartItemDTO convertCartItemToCartItemDTO(CartItem cartItem) {
+    private static CartItemDTO convertCartItemToCartItemDTO(CartItem cartItem) {
         CartItemDTO cartItemDTO = new CartItemDTO();
-        cartItemDTO.setOffer(commonAllProductLinkedUtils.convertOfferToOfferDTO(cartItem.getOffer()));
+        cartItemDTO.setOffer(CommonAllProductLinkedUtils.convertOfferToOfferDTO(cartItem.getOffer()));
         cartItemDTO.setQuantity(cartItem.getQuantity());
         return cartItemDTO;
     }

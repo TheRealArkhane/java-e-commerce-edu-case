@@ -17,19 +17,17 @@ import java.util.stream.Collectors;
 public class AttributeService {
 
     private final AttributeRepository attributeRepository;
-    private final OfferRepository offerRepository;
-    private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
 
     public List<AttributeDTO> getAllAttributes() {
         return attributeRepository.findAll()
                 .stream()
-                .map(commonAllProductLinkedUtils::convertAttributeToAttributeDTO)
+                .map(CommonAllProductLinkedUtils::convertAttributeToAttributeDTO)
                 .collect(Collectors.toList());
     }
 
     public AttributeDTO getAttributeById(Long id) {
         Attribute attribute = attributeRepository.findById(id)
                 .orElseThrow(() -> new AttributeNotFoundException("Атрибут с id: " + id + " не найден"));
-        return commonAllProductLinkedUtils.convertAttributeToAttributeDTO(attribute);
+        return CommonAllProductLinkedUtils.convertAttributeToAttributeDTO(attribute);
     }
 }

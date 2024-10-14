@@ -13,11 +13,10 @@ import org.springframework.stereotype.Service;
 public class AdminCartService {
 
     private final CartRepository cartRepository;
-    private final CartUtils cartUtils;
 
     public CartDTO getUserCart(Long userId) {
         Cart cart = cartRepository.findByUserId(userId).orElseThrow(() -> new CartNotFoundException("Cart not found"));
-        return cartUtils.convertCartToCartDTO(cart);
+        return CartUtils.convertCartToCartDTO(cart);
     }
 
     public void clearUserCart(Long userId) {

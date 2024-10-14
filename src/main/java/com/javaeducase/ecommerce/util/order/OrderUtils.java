@@ -15,13 +15,9 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
-@RequiredArgsConstructor
 public class OrderUtils {
 
-    private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
-
-    public OrderDTO convertOrderToOrderDTO(Order order) {
+    public static OrderDTO convertOrderToOrderDTO(Order order) {
 
         OrderDTO orderDTO = new OrderDTO();
         orderDTO.setId(order.getId());
@@ -42,7 +38,7 @@ public class OrderUtils {
         return orderDTO;
     }
 
-    public DeliveryDTO convertDeliveryToDeliveryDTO(Delivery delivery) {
+    public static DeliveryDTO convertDeliveryToDeliveryDTO(Delivery delivery) {
         DeliveryDTO deliveryDTO = new DeliveryDTO();
         deliveryDTO.setId(delivery.getId());
         deliveryDTO.setName(delivery.getName());
@@ -50,16 +46,16 @@ public class OrderUtils {
         return deliveryDTO;
     }
 
-    public PaymentDTO convertPaymentToPaymentDTO(Payment payment) {
+    public static PaymentDTO convertPaymentToPaymentDTO(Payment payment) {
         PaymentDTO paymentDTO = new PaymentDTO();
         paymentDTO.setId(payment.getId());
         paymentDTO.setName(payment.getName());
         return paymentDTO;
     }
 
-    public OrderDetailDTO convertOrderDetailToOrderDetailDTO(OrderDetail orderDetail) {
+    public static OrderDetailDTO convertOrderDetailToOrderDetailDTO(OrderDetail orderDetail) {
         OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
-        orderDetailDTO.setOffer(commonAllProductLinkedUtils.convertOfferToOfferDTO(orderDetail.getOffer()));
+        orderDetailDTO.setOffer(CommonAllProductLinkedUtils.convertOfferToOfferDTO(orderDetail.getOffer()));
         orderDetailDTO.setQuantity(orderDetail.getQuantity());
         orderDetailDTO.setTotalOfferAmount(orderDetail.getTotalOfferAmount());
         return orderDetailDTO;

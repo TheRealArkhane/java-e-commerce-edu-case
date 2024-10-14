@@ -15,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +24,6 @@ import java.util.List;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final UserUtils userUtils;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
@@ -63,7 +61,7 @@ public class UserService implements UserDetailsService {
         if (currentUser.isDeleted()) {
             throw new UserIsDeletedException("Пользователь ранее был удален");
         }
-        userUtils.checkPasswords(oldPassword, newPassword, currentUser.getPassword());
+        UserUtils.checkPasswords(oldPassword, newPassword, currentUser.getPassword(), passwordEncoder);
         currentUser.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(currentUser);
     }
@@ -74,7 +72,7 @@ public class UserService implements UserDetailsService {
         if (user.isDeleted()) {
             throw new UserIsDeletedException("Пользователь ранее был удален");
         }
-        return userUtils.convertToDTO(user);
+        return UserUtils.convertToDTO(user);
     }
 
     public UserDTO updateCurrentUser(UserDTO userDTO) {
@@ -83,16 +81,14 @@ public class UserService implements UserDetailsService {
             throw new UserIsDeletedException("Пользователь ранее был удален");
         }
         if (!currentUser.getEmail().equals(userDTO.getEmail())) {
-            userUtils.validateEmail(userDTO.getEmail());  // Проверяем формат нового email
-            if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
-                throw new IllegalArgumentException("Пользователь с таким email уже существует");
-            }
+            UserUtils.validateEmail(userDTO.getEmail());  // Проверяем формат нового email
+            UserUtils.checkEmailExists(userDTO.getEmail(), userRepository);  // Проверяем наличие email в БД
             currentUser.setEmail(userDTO.getEmail());  // Устанавливаем новый email
         }
         currentUser.setFirstName(userDTO.getFirstName());
         currentUser.setLastName(userDTO.getLastName());
         User updatedUser = userRepository.save(currentUser);
-        return userUtils.convertToDTO(updatedUser);
+        return UserUtils.convertToDTO(updatedUser);
     }
 
     public void deleteCurrentUser() {

@@ -18,7 +18,6 @@ public class AdminCategoryService {
 
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
-    private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
 
     public CategoryDTO updateCategory(Long id, CategoryDTO categoryDTO) {
         Category category = categoryRepository.findById(id)
@@ -26,7 +25,7 @@ public class AdminCategoryService {
 
         category.setName(categoryDTO.getName());
         categoryRepository.save(category);
-        return commonAllProductLinkedUtils.convertCategoryToCategoryDTO(category);
+        return CommonAllProductLinkedUtils.convertCategoryToCategoryDTO(category);
     }
 
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
@@ -45,7 +44,7 @@ public class AdminCategoryService {
         }
 
         categoryRepository.save(newCategory);
-        return commonAllProductLinkedUtils.convertCategoryToCategoryDTO(newCategory);
+        return CommonAllProductLinkedUtils.convertCategoryToCategoryDTO(newCategory);
     }
 
     public void deleteCategory(Long id) {

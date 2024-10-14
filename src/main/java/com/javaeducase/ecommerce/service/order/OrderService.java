@@ -40,7 +40,6 @@ public class OrderService {
     private final PickupLocationRepository pickupLocationRepository;
     private final UserService userService;
     private final CartService cartService;
-    private final OrderUtils orderUtils;
 
     @Transactional
     public OrderDTO createOrder(RequestOrderDTO requestOrderDTO) {
@@ -107,10 +106,10 @@ public class OrderService {
         cartService.clearCart();
         cartRepository.save(cart);
 
-        return orderUtils.convertOrderToOrderDTO(order);
+        return OrderUtils.convertOrderToOrderDTO(order);
     }
 
     public List<OrderDTO> getUserOrders(Long userId) {
-        return orderRepository.findAllByUserId(userId).stream().map(orderUtils::convertOrderToOrderDTO).toList();
+        return orderRepository.findAllByUserId(userId).stream().map(OrderUtils::convertOrderToOrderDTO).toList();
     }
 }

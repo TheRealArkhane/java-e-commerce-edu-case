@@ -21,17 +21,16 @@ import java.util.stream.Collectors;
 public class AdminUserService {
 
     private final UserRepository userRepository;
-    private final UserUtils userUtils;
     private final BCryptPasswordEncoder passwordEncoder;
 
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream()
-                .map(userUtils::convertToDTO)
+                .map(UserUtils::convertToDTO)
                 .collect(Collectors.toList());
     }
 
     public UserDTO getUserById(Long id) {
-        return userUtils.convertToDTO(userRepository.findById(id)
+        return UserUtils.convertToDTO(userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь не найден")));
     }
 
@@ -46,7 +45,7 @@ public class AdminUserService {
         if (user.getRole().name().equals("ADMIN")) {
             throw new InsufficientAdminPrivilegesException("Администратор не может изменять данные другого администратора");
         }
-        userUtils.checkPasswords(oldPassword, newPassword, user.getPassword());
+        UserUtils.checkPasswords(oldPassword, newPassword, user.getPassword(), passwordEncoder);
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
@@ -60,13 +59,13 @@ public class AdminUserService {
         if (user.getRole().name().equals("ADMIN")) {
             throw new InsufficientAdminPrivilegesException("Администратор не может изменять данные другого администратора");
         }
-        userUtils.validateEmail(userDTO.getEmail());
-        userUtils.checkEmailExists(userDTO.getEmail());
+        UserUtils.validateEmail(userDTO.getEmail());
+        UserUtils.checkEmailExists(userDTO.getEmail(), userRepository);
         user.setEmail(userDTO.getEmail());
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
         user = userRepository.save(user);
-        return userUtils.convertToDTO(user);
+        return UserUtils.convertToDTO(user);
     }
 
     public void deleteUser(Long id) {

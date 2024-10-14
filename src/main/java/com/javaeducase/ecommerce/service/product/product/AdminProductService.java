@@ -21,9 +21,7 @@ public class AdminProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
-    private final OfferRepository offerRepository;
-    private final ProductUtils productUtils;
-    private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
+//    private final OfferRepository offerRepository;
 
 
     public ProductDTO createProduct(ProductDTO productDTO) {
@@ -38,7 +36,7 @@ public class AdminProductService {
         product.setOffers(new ArrayList<>());   // <--- т.к. офферы связаны с конкретным продуктом как @ManyToOne
                                                 //      и должны быть заведены отдельным методом
         Product savedProduct = productRepository.save(product);
-        return productUtils.convertProductToProductDTO(savedProduct);
+        return ProductUtils.convertProductToProductDTO(savedProduct);
     }
 
     public ProductDTO updateProduct(Long id, ProductDTO productDTO) {
@@ -56,7 +54,7 @@ public class AdminProductService {
         product.setDescription(productDTO.getDescription());
         product.setCategory(category);
         Product updatedProduct = productRepository.save(product);
-        return productUtils.convertProductToProductDTO(updatedProduct);
+        return ProductUtils.convertProductToProductDTO(updatedProduct);
     }
 
     public void deleteProduct(Long id) {

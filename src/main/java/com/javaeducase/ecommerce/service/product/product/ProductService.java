@@ -19,20 +19,18 @@ import java.util.stream.Collectors;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final ProductUtils productUtils;
-    private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
 
 
     public List<ProductDTO> getAllProducts() {
         return productRepository.findAll().stream()
-                .map(productUtils::convertProductToProductDTO)
+                .map(ProductUtils::convertProductToProductDTO)
                 .collect(Collectors.toList());
     }
 
     public List<ProductDTO> getAllActiveProducts() {
         return productRepository.findAll().stream()
                 .filter(product -> !product.getIsDeleted())
-                .map(productUtils::convertProductToProductDTO)
+                .map(ProductUtils::convertProductToProductDTO)
                 .collect(Collectors.toList());
     }
 
@@ -42,7 +40,7 @@ public class ProductService {
         if (product.getIsDeleted()) {
             throw new ProductIsDeletedException("Товар был ранее удален");
         }
-        return productUtils.convertProductToProductDTO(product);
+        return ProductUtils.convertProductToProductDTO(product);
     }
 
     public List<OfferDTO> getAllOffersOfProduct(Long id) {
@@ -52,7 +50,7 @@ public class ProductService {
             throw new ProductIsDeletedException("Товар был ранее удален");
         }
         return product.getOffers().stream()
-                .map(commonAllProductLinkedUtils::convertOfferToOfferDTO)
+                .map(CommonAllProductLinkedUtils::convertOfferToOfferDTO)
                 .collect(Collectors.toList());
     }
 }

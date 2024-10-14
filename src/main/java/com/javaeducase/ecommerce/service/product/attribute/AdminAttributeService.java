@@ -14,12 +14,11 @@ import org.springframework.stereotype.Service;
 public class AdminAttributeService {
 
     private final AttributeRepository attributeRepository;
-    private final CommonAllProductLinkedUtils commonAllProductLinkedUtils;
 
     public AttributeDTO createAttribute(AttributeDTO attributeDTO) {
-        Attribute attribute = commonAllProductLinkedUtils.convertAttributeDTOToAttribute(attributeDTO);
+        Attribute attribute = CommonAllProductLinkedUtils.convertAttributeDTOToAttribute(attributeDTO);
         Attribute savedAttribute = attributeRepository.save(attribute);
-        return commonAllProductLinkedUtils.convertAttributeToAttributeDTO(savedAttribute);
+        return CommonAllProductLinkedUtils.convertAttributeToAttributeDTO(savedAttribute);
     }
 
     public AttributeDTO updateAttribute(Long id, AttributeDTO attributeDTO) {
@@ -37,7 +36,7 @@ public class AdminAttributeService {
         attribute.setValue(newValue);
 
         Attribute updatedAttribute = attributeRepository.save(attribute);
-        return commonAllProductLinkedUtils.convertAttributeToAttributeDTO(updatedAttribute);
+        return CommonAllProductLinkedUtils.convertAttributeToAttributeDTO(updatedAttribute);
     }
 
 }
