@@ -1,5 +1,6 @@
 package com.javaeducase.ecommerce.config;
 
+import com.javaeducase.ecommerce.repository.user.UserRepository;
 import com.javaeducase.ecommerce.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -21,18 +22,16 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserService userService;
-
     @Bean
     public GrantedAuthorityDefaults grantedAuthorityDefaults() {
-        return new GrantedAuthorityDefaults("");  // Устанавливаем пустой префикс
+        return new GrantedAuthorityDefaults("");
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 // Настройка CSRF
-                .csrf(AbstractHttpConfigurer::disable)  // Отключение CSRF защиты
+                .csrf(AbstractHttpConfigurer::disable)
 
                 // Настройка авторизации запросов
                 .authorizeHttpRequests(auth -> auth
@@ -66,6 +65,12 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+        return new UserService(userRepository, passwordEncoder);
+
     }
 
     @Bean
