@@ -40,6 +40,7 @@ public class OrderService {
     private final PickupLocationRepository pickupLocationRepository;
     private final UserService userService;
     private final CartService cartService;
+    private final DaDataService daDataService;
 
     @Transactional
     public OrderDTO createOrder(RequestOrderDTO requestOrderDTO) {
@@ -71,14 +72,17 @@ public class OrderService {
         if (address == null || address.isEmpty()) {
             throw new IllegalArgumentException("Необходимо ввести адрес");
         }
-        else if (delivery.getId().equals(1L)) {
-            if (!pickupLocationRepository.findByAddress(address).isPresent()) {
+        else if (delivery.getId().equals(1L)) {  // Если выбран самовывоз
+            // Валидация адреса самовывоза через DaData
+            String validatedAddress = daDataService.validateAddress(address);
+
+            if (!pickupLocationRepository.findByAddress(validatedAddress).isPresent()) {
                 throw new IllegalArgumentException("Такого пункта самовывоза нет");
             }
-            order.setAddress(address);
+            order.setAddress(validatedAddress);  // Устанавливаем проверенный адрес
         }
         else {
-            order.setAddress(address);
+            order.setAddress(daDataService.validateAddress(address));
         }
 
         for (CartItem cartItem : cart.getItems()) {
