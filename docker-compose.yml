@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  database:
+    ports:
+      - '5432:5432'
+    image: postgres:latest
+    container_name: 'java-postgres-db'
+    volumes:
+      - '/postgres_data:/var/lib/postgresql'
+    environment:
+      - 'SPRING_JPA_HIBERNATE_DDL_AUTO=update'
+      - 'POSTGRES_USER=postgres'
+      - 'POSTGRES_PASSWORD=0'
+      - 'POSTGRES_ROOT_PASSWORD=0'
+      - 'POSTGRES_DB=ecommerce'
+      - 'PGDATA=/var/lib/postgresql/data'
+
+  application:
+    build:
+      context: .    # Указывает, что нужно использовать текущую директорию для сборки образа
+      dockerfile: Dockerfile   # Указывает Dockerfile для сборки образа
+    container_name: 'java-e-commerce-edu-case'
+    environment:
+      - 'spring.datasource.url=jdbc:postgresql://database:5432/ecommerce'
+    ports:
+      - '8080:8080'
+    depends_on:
+      - database
