@@ -41,7 +41,7 @@ public class UserController {
         userService.deleteCurrentUser();
         SecurityContextHolder.getContext().setAuthentication(null);
         Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("message", "РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ СѓСЃРїРµС€РЅРѕ СѓРґР°Р»РµРЅ");
+        responseBody.put("message", "Пользователь успешно удален");
         return new ResponseEntity<>(responseBody, HttpStatus.NO_CONTENT);
     }
 
@@ -49,7 +49,7 @@ public class UserController {
     public ResponseEntity<Map<String, String>> changePassword(@RequestBody ChangePasswordRequestDTO request) {
         userService.changePassword(request);
         Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("message", "РџР°СЂРѕР»СЊ СѓСЃРїРµС€РЅРѕ РёР·РјРµРЅРµРЅ");
+        responseBody.put("message", "Пароль успешно изменен");
         return ResponseEntity.ok(responseBody);
     }
 }

@@ -44,7 +44,7 @@ public class AdminUserController {
 
         adminUserService.deleteUser(id);
         Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("message", "РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ СѓСЃРїРµС€РЅРѕ СѓРґР°Р»РµРЅ");
+        responseBody.put("message", "Пользователь успешно удален");
         return ResponseEntity.ok(responseBody);
     }
 
@@ -53,7 +53,7 @@ public class AdminUserController {
                                                                   @RequestBody ChangePasswordRequestDTO request) {
         adminUserService.changeUserPassword(id, request);
         Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("message", "РџР°СЂРѕР»СЊ СѓСЃРїРµС€РЅРѕ РёР·РјРµРЅРµРЅ");
+        responseBody.put("message", "Пароль успешно изменен");
         return ResponseEntity.ok(responseBody);
     }
 }

@@ -21,16 +21,16 @@ public class CartItemService {
     public CartItem createCartItem(Long offerId, int quantity) {
 
         if (quantity <= 0) {
-            throw new IllegalArgumentException("РљРѕР»РёС‡РµСЃС‚РІРѕ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ Р±РѕР»СЊС€Рµ 0");
+            throw new IllegalArgumentException("Количество должно быть больше 0");
         }
 
         Offer offer = offerRepository.findById(offerId)
-                .orElseThrow(() -> new OfferNotFoundException("РџСЂРµРґР»РѕР¶РµРЅРёРµ СЃ id: " + offerId + " РЅРµ РЅР°Р№РґРµРЅРѕ"));
+                .orElseThrow(() -> new OfferNotFoundException("Предложение с id: " + offerId + " не найдено"));
 
-        if (offer.getIsDeleted()) throw new OfferIsDeletedException("РџСЂРµРґР»РѕР¶РµРЅРёРµ Р±С‹Р»Рѕ СѓРґР°Р»РµРЅРѕ");
-        if (!offer.getIsAvailable()) throw new OfferIsUnavailableException("РџСЂРµРґР»РѕР¶РµРЅРёРµ РЅР° РґР°РЅРЅС‹Р№ РјРѕРјРµРЅС‚ РЅРµРґРѕСЃС‚СѓРїРЅРѕ");
+        if (offer.getIsDeleted()) throw new OfferIsDeletedException("Предложение было удалено");
+        if (!offer.getIsAvailable()) throw new OfferIsUnavailableException("Предложение на данный момент недоступно");
         if (quantity > offer.getStockQuantity()) {
-            throw new IllegalArgumentException("РљРѕР»РёС‡РµСЃС‚РІРѕ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ Р±РѕР»СЊС€Рµ, С‡РµРј РґРѕСЃС‚СѓРїРЅРѕ РЅР° СЃРєР»Р°РґРµ");
+            throw new IllegalArgumentException("Количество не может быть больше, чем доступно на складе");
         }
 
         CartItem cartItem = new CartItem();
@@ -41,17 +41,17 @@ public class CartItemService {
 
     public CartItem updateCartItem(Long cartItemId, int newQuantity) {
         CartItem cartItem = cartItemRepository.findById(cartItemId)
-                .orElseThrow(() -> new CartItemNotFoundException("Р­Р»РµРјРµРЅС‚ РєРѕСЂР·РёРЅС‹ СЃ id: " + cartItemId + " РЅРµ РЅР°Р№РґРµРЅ"));
+                .orElseThrow(() -> new CartItemNotFoundException("Элемент корзины с id: " + cartItemId + " не найден"));
 
         Offer offer = cartItem.getOffer();
 
         if (newQuantity < 0) {
-            throw new IllegalArgumentException("РљРѕР»РёС‡РµСЃС‚РІРѕ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅС‹Рј");
+            throw new IllegalArgumentException("Количество не может быть отрицательным");
         } else if (newQuantity == 0) {
             deleteCartItem(cartItemId);
             return null;
         } else if (newQuantity > offer.getStockQuantity()) {
-            throw new IllegalArgumentException("РљРѕР»РёС‡РµСЃС‚РІРѕ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ Р±РѕР»СЊС€Рµ, С‡РµРј РґРѕСЃС‚СѓРїРЅРѕ РЅР° СЃРєР»Р°РґРµ");
+            throw new IllegalArgumentException("Количество не может быть больше, чем доступно на складе");
         }
 
         cartItem.setQuantity(newQuantity);

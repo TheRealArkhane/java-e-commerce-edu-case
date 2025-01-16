@@ -5,9 +5,6 @@ import com.javaeducase.ecommerce.entity.user.User;
 import com.javaeducase.ecommerce.exception.user.IdenticalPasswordException;
 import com.javaeducase.ecommerce.repository.user.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 public class UserUtils {
 
@@ -15,22 +12,22 @@ public class UserUtils {
 
     public static void validateEmail(String email) {
         if (email == null || !email.matches(EMAIL_REGEX)) {
-            throw new IllegalArgumentException("РќРµРїСЂР°РІРёР»СЊРЅС‹Р№ С„РѕСЂРјР°С‚ email");
+            throw new IllegalArgumentException("Неправильный формат email");
         }
     }
 
     public static void checkEmailExists(String email, UserRepository userRepository) {
         if (userRepository.findByEmail(email).isPresent()) {
-            throw new IllegalArgumentException("РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ СЃ С‚Р°РєРёРј email СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚");
+            throw new IllegalArgumentException("Пользователь с таким email уже существует");
         }
     }
 
     public static void checkPasswords(String oldPassword, String newPassword, String storedPassword, BCryptPasswordEncoder passwordEncoder) {
         if (!passwordEncoder.matches(oldPassword, storedPassword)) {
-            throw new IllegalArgumentException("РЎС‚Р°СЂС‹Р№ РїР°СЂРѕР»СЊ РЅРµРІРµСЂРµРЅ");
+            throw new IllegalArgumentException("Старый пароль неверен");
         }
         if (passwordEncoder.matches(newPassword, storedPassword)) {
-            throw new IdenticalPasswordException("РќРѕРІС‹Р№ РїР°СЂРѕР»СЊ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РёРґРµРЅС‚РёС‡РµРЅ СЃС‚Р°СЂРѕРјСѓ");
+            throw new IdenticalPasswordException("Новый пароль не может быть идентичен старому");
         }
     }
 
