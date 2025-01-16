@@ -24,8 +24,10 @@ public class Delivery {
     @Column(name = "delivery_price", nullable = false)
     private int deliveryPrice;
 
-    @OneToMany(mappedBy = "delivery", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @ManyToMany
+    @JoinTable(name = "delivery_payments",
+            joinColumns = @JoinColumn(name = "delivery_id"),
+            inverseJoinColumns = @JoinColumn(name = "payment_id"))
     private List<Payment> payments;
 
     @OneToMany(mappedBy = "delivery", cascade = CascadeType.ALL)

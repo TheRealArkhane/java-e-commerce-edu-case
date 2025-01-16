@@ -26,11 +26,33 @@ public class DaDataService {
         JSONArray jsonArray = response.getBody().getArray();
         JSONObject jsonObject = jsonArray.getJSONObject(0);
 
-        String regionWithType = jsonObject.getString("region_with_type");
-        String cityWithType = jsonObject.getString("city_with_type");
-        String streetWithType = jsonObject.getString("street_with_type");
-        String house = jsonObject.getString("house");
-        String houseType = jsonObject.getString("house_type");
-        return regionWithType + ", " + cityWithType + ", " + streetWithType + ", " + houseType + " " + house;
+        String regionWithType = jsonObject.optString("region_with_type", "");
+        String cityWithType = jsonObject.optString("city_with_type", "");
+        String streetWithType = jsonObject.optString("street_with_type", "");
+        String house = jsonObject.optString("house", "");
+        String houseType = jsonObject.optString("house_type", "");
+
+        StringBuilder result = new StringBuilder();
+        if (!regionWithType.isEmpty()) {
+            result.append(regionWithType);
+        }
+        if (!cityWithType.isEmpty()) {
+            if (!result.isEmpty()) result.append(", ");
+            result.append(cityWithType);
+        }
+        if (!streetWithType.isEmpty()) {
+            if (!result.isEmpty()) result.append(", ");
+            result.append(streetWithType);
+        }
+        if (!houseType.isEmpty()) {
+            if (!result.isEmpty()) result.append(", ");
+            result.append(houseType);
+        }
+        if (!house.isEmpty()) {
+            if (!result.isEmpty()) result.append(" ");
+            result.append(house);
+        }
+        return result.toString();
     }
 }
+

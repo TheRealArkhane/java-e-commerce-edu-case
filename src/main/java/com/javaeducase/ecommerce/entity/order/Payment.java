@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -18,9 +20,4 @@ public class Payment {
 
     @Column(name = "name", nullable = false)
     private String name;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "delivery_id", nullable = false)
-    @JsonBackReference
-    private Delivery delivery;
 }

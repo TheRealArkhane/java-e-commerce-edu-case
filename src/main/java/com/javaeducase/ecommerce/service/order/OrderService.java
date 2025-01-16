@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -66,19 +67,23 @@ public class OrderService {
 
         Order order = new Order();
         order.setUser(currentUser);
-        if (address == null || address.isEmpty()) {
+        String daDataAddress = daDataService.validateAddress(address);
+        if (daDataAddress == null || daDataAddress.isEmpty()) {
             throw new IllegalArgumentException("Необходимо ввести адрес");
         }
-        else if (delivery.getId().equals(2L)) {
-            PickupLocation pickupLocation = pickupLocationRepository.findByAddress(address).orElse(null);
+        else if (Objects.equals(delivery.getName(), "Самовывоз")) {
+            PickupLocation pickupLocation = pickupLocationRepository.findByAddress(daDataAddress).orElse(null);
             if (pickupLocation == null) {
                 throw new IllegalArgumentException("Такого пункта самовывоза нет");
             }
-            order.setAddress(address);
+            order.setAddress(daDataAddress);
             order.setPickupLocation(pickupLocation.getName());
         }
         else {
-            order.setAddress(daDataService.validateAddress(address));
+            if (pickupLocationRepository.findAllAddress().contains(daDataAddress)) {
+                throw new IllegalArgumentException("Нельзя заказать доставку на адрес самовывоза");
+            }
+            order.setAddress(daDataAddress);
             order.setPickupLocation(null);
         }
 
