@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "pickup_locations", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"location_name", "address"})})
+        @UniqueConstraint(columnNames = {"name", "address"})})
 public class PickupLocation {
 
     @Id
@@ -17,8 +17,8 @@ public class PickupLocation {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "location_name")
-    private String locationName;
+    @Column(name = "name")
+    private String name;
 
     @Column(name = "address", nullable = false)
     private String address;

@@ -22,6 +22,7 @@ public class OrderUtils {
         OrderDTO orderDTO = new OrderDTO();
         orderDTO.setId(order.getId());
         orderDTO.setAddress(order.getAddress());
+        orderDTO.setPickupLocation(order.getPickupLocation());
 
         List<OrderDetail> orderDetails = order.getOrderDetails();
         List<OrderDetailDTO> orderDetailsDTO = new ArrayList<>();

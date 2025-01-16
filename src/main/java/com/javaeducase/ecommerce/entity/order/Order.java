@@ -30,6 +30,9 @@ public class Order {
     @Column(name = "address", nullable = false)
     private String address;
 
+    @Column(name = "pickup_location")
+    private String pickupLocation;
+
     @ManyToOne
     @JoinColumn(name = "delivery_id", nullable = false)
     private Delivery delivery;

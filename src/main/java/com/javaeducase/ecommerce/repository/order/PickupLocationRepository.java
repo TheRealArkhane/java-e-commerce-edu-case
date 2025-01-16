@@ -9,6 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface PickupLocationRepository extends JpaRepository<PickupLocation, Long> {
-    List<PickupLocation> findAll();
     Optional<PickupLocation> findByAddress(String address);
 }

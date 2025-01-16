@@ -4,10 +4,7 @@ import com.javaeducase.ecommerce.dto.order.OrderDTO;
 import com.javaeducase.ecommerce.dto.order.RequestOrderDTO;
 import com.javaeducase.ecommerce.entity.cart.Cart;
 import com.javaeducase.ecommerce.entity.cart.CartItem;
-import com.javaeducase.ecommerce.entity.order.Delivery;
-import com.javaeducase.ecommerce.entity.order.Order;
-import com.javaeducase.ecommerce.entity.order.OrderDetail;
-import com.javaeducase.ecommerce.entity.order.Payment;
+import com.javaeducase.ecommerce.entity.order.*;
 import com.javaeducase.ecommerce.entity.product.Offer;
 import com.javaeducase.ecommerce.entity.user.User;
 import com.javaeducase.ecommerce.exception.cart.CartNotFoundException;
@@ -72,16 +69,17 @@ public class OrderService {
         if (address == null || address.isEmpty()) {
             throw new IllegalArgumentException("Необходимо ввести адрес");
         }
-        else if (delivery.getId().equals(1L)) {
-            String validatedAddress = daDataService.validateAddress(address);
-
-            if (!pickupLocationRepository.findByAddress(validatedAddress).isPresent()) {
+        else if (delivery.getId().equals(2L)) {
+            PickupLocation pickupLocation = pickupLocationRepository.findByAddress(address).orElse(null);
+            if (pickupLocation == null) {
                 throw new IllegalArgumentException("Такого пункта самовывоза нет");
             }
-            order.setAddress(validatedAddress);
+            order.setAddress(address);
+            order.setPickupLocation(pickupLocation.getName());
         }
         else {
             order.setAddress(daDataService.validateAddress(address));
+            order.setPickupLocation(null);
         }
 
         for (CartItem cartItem : cart.getItems()) {

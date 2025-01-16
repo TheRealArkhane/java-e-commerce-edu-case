@@ -14,6 +14,7 @@ public class OrderDTO {
     @JsonProperty("orderDetails")
     private List<OrderDetailDTO> orderDetailDTO;
     private String address;
+    private String pickupLocation;
     private DeliveryDTO delivery;
     private PaymentDTO payment;
     private LocalDateTime orderCreateDateTime;

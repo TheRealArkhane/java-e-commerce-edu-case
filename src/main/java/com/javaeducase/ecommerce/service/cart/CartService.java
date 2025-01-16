@@ -36,10 +36,6 @@ public class CartService {
         int quantity = requestCartItemDTO.getQuantity();
         Long offerId = requestCartItemDTO.getOfferId();
 
-        if (quantity < 0) {
-            throw new IllegalArgumentException("Количество должно быть >= 0");
-        }
-
         Cart cart = cartRepository.findByUserId(userId)
                 .orElseThrow(() -> new CartNotFoundException("Корзина пользователя с id: " + userId + " не найдена"));
 
@@ -53,19 +49,23 @@ public class CartService {
                 .findFirst();
 
         if (existingItem.isPresent()) {
-            if (quantity > offer.getStockQuantity()) {
+            int existingItemQuantitySum = existingItem.get().getQuantity() + quantity;
+            if (existingItemQuantitySum > offer.getStockQuantity()) {
                 throw new IllegalArgumentException("Количество товара с id: "
                         + offer.getId()
-                        +" добавляемого в корзину, превышает его кол-во на складе");
+                        +", добавляемого в корзину, превышает его кол-во на складе");
             }
-            if (quantity == 0) {
+            if (existingItemQuantitySum <= 0) {
                 cart.removeItem(existingItem.get());
                 cartItemService.deleteCartItem(existingItem.get().getId());
             } else {
-                cartItemService.updateCartItem(existingItem.get().getId(), quantity);
+                cartItemService.updateCartItem(existingItem.get().getId(), existingItemQuantitySum);
             }
         } else {
-            if (quantity > offer.getStockQuantity()) {
+            if (quantity <= 0) {
+                throw new IllegalArgumentException("Количество добавляемого должно быть > 0");
+            }
+            else if (quantity > offer.getStockQuantity()) {
                 throw new IllegalArgumentException("Количество товара с id: "
                         + offer.getId()
                         +" добавляемого в корзину, превышает его кол-во на складе");
