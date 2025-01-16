@@ -26,29 +26,29 @@ public class AdminProductService {
 
     public ProductDTO createProduct(ProductDTO productDTO) {
         Category category = categoryRepository.findById(productDTO.getCategory().getId())
-                .orElseThrow(() -> new IllegalArgumentException("РљР°С‚РµРіРѕСЂРёСЏ РЅРµ РЅР°Р№РґРµРЅР°"));
+                .orElseThrow(() -> new IllegalArgumentException("Категория не найдена"));
 
         Product product = new Product();
         product.setName(productDTO.getName());
         product.setDescription(productDTO.getDescription());
         product.setCategory(category);
         product.setIsDeleted(false);
-        product.setOffers(new ArrayList<>());   // <--- С‚.Рє. РѕС„С„РµСЂС‹ СЃРІСЏР·Р°РЅС‹ СЃ РєРѕРЅРєСЂРµС‚РЅС‹Рј РїСЂРѕРґСѓРєС‚РѕРј РєР°Рє @ManyToOne
-                                                //      Рё РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ Р·Р°РІРµРґРµРЅС‹ РѕС‚РґРµР»СЊРЅС‹Рј РјРµС‚РѕРґРѕРј
+        product.setOffers(new ArrayList<>());   // <--- т.к. офферы связаны с конкретным продуктом как @ManyToOne
+                                                //      и должны быть заведены отдельным методом
         Product savedProduct = productRepository.save(product);
         return ProductUtils.convertProductToProductDTO(savedProduct);
     }
 
     public ProductDTO updateProduct(Long id, ProductDTO productDTO) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("РўРѕРІР°СЂ СЃ id: " + id + " РЅРµ РЅР°Р№РґРµРЅ"));
+                .orElseThrow(() -> new ProductNotFoundException("Товар с id: " + id + " не найден"));
 
         if (product.getIsDeleted()) {
-            throw new ProductIsDeletedException("РўРѕРІР°СЂ Р±С‹Р» СЂР°РЅРµРµ СѓРґР°Р»РµРЅ");
+            throw new ProductIsDeletedException("Товар был ранее удален");
         }
 
         Category category = categoryRepository.findById(productDTO.getCategory().getId())
-                .orElseThrow(() -> new IllegalArgumentException("РљР°С‚РµРіРѕСЂРёСЏ РЅРµ РЅР°Р№РґРµРЅР°"));
+                .orElseThrow(() -> new IllegalArgumentException("Категория не найдена"));
 
         product.setName(productDTO.getName());
         product.setDescription(productDTO.getDescription());
@@ -59,10 +59,10 @@ public class AdminProductService {
 
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("РўРѕРІР°СЂ СЃ id: " + id + " РЅРµ РЅР°Р№РґРµРЅ"));
+                .orElseThrow(() -> new ProductNotFoundException("Товар с id: " + id + " не найден"));
 
         if (product.getIsDeleted()) {
-            throw new ProductIsDeletedException("РўРѕРІР°СЂ Р±С‹Р» СЂР°РЅРµРµ СѓРґР°Р»РµРЅ");
+            throw new ProductIsDeletedException("Товар был ранее удален");
         }
 
         product.setIsDeleted(true);
@@ -74,17 +74,17 @@ public class AdminProductService {
 
 //    public ProductDTO addOfferToProduct(Long productId, Long offerId) { //TODO: Replace with OfferDTO
 //        Product product = productRepository.findById(productId)
-//                .orElseThrow(() -> new ProductNotFoundException("РўРѕРІР°СЂ СЃ id: " + productId + " РЅРµ РЅР°Р№РґРµРЅ"));
+//                .orElseThrow(() -> new ProductNotFoundException("Товар с id: " + productId + " не найден"));
 //
 //        if (product.getIsDeleted()) {
-//            throw new ProductIsDeletedException("РўРѕРІР°СЂ Р±С‹Р» СЂР°РЅРµРµ СѓРґР°Р»РµРЅ");
+//            throw new ProductIsDeletedException("Товар был ранее удален");
 //        }
 //
 //        Offer offer = offerRepository.findById(offerId)
-//                .orElseThrow(() -> new OfferNotFoundException("РџСЂРµРґР»РѕР¶РµРЅРёРµ СЃ id: " + offerId + " РЅРµ РЅР°Р№РґРµРЅРѕ"));
+//                .orElseThrow(() -> new OfferNotFoundException("Предложение с id: " + offerId + " не найдено"));
 //
 //        if (offer.getIsDeleted()) {
-//            throw new OfferIsDeletedException("РџСЂРµРґР»РѕР¶РµРЅРёРµ СЃ id: " + offer.getId() + " Р±С‹Р»Рѕ СЂР°РЅРµРµ СѓРґР°Р»РµРЅРѕ");
+//            throw new OfferIsDeletedException("Предложение с id: " + offer.getId() + " было ранее удалено");
 //        }
 //        offer.setProduct(product);
 //        offerRepository.save(offer);

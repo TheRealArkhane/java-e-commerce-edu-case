@@ -20,6 +20,6 @@ public class PaymentService {
     }
 
     public Payment getPaymentById(Long id) {
-        return paymentRepository.findById(id).orElseThrow(() -> new PaymentNotFoundException("РЎРїРѕСЃРѕР± РѕРїР»Р°С‚С‹ РЅРµ РЅР°Р№РґРµРЅ"));
+        return paymentRepository.findById(id).orElseThrow(() -> new PaymentNotFoundException("Способ оплаты не найден"));
     }
 }

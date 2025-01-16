@@ -51,35 +51,35 @@ public class OrderService {
         User currentUser = userService.getCurrentUser();
 
         Cart cart = cartRepository.findByUserId(currentUser.getId())
-                .orElseThrow(() -> new CartNotFoundException("РЈ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РєРѕСЂР·РёРЅР°"));
+                .orElseThrow(() -> new CartNotFoundException("У пользователя отсутствует корзина"));
 
         if (cart.getItems().isEmpty()) {
-            throw new IllegalArgumentException("РљРѕСЂР·РёРЅР° РїСѓСЃС‚Р°, РЅРµРѕР±С…РѕРґРёРјРѕ Р·Р°РїРѕР»РЅРёС‚СЊ РµРµ С‚РѕРІР°СЂРѕРј");
+            throw new IllegalArgumentException("Корзина пуста, необходимо заполнить ее товаром");
         }
 
         Delivery delivery = deliveryRepository.findById(deliveryId)
-                .orElseThrow(() -> new DeliveryNotFoundException("РќРµ РЅР°Р№РґРµРЅ СЃРїРѕСЃРѕР± РґРѕСЃС‚Р°РІРєРё СЃ id: " + deliveryId));
+                .orElseThrow(() -> new DeliveryNotFoundException("Не найден способ доставки с id: " + deliveryId));
 
         Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new PaymentNotFoundException("РќРµ РЅР°Р№РґРµРЅ СЃРїРѕСЃРѕР± РґРѕСЃС‚Р°РІРєРё СЃ id: " + paymentId));
+                .orElseThrow(() -> new PaymentNotFoundException("Не найден способ доставки с id: " + paymentId));
 
         if (!delivery.getPayments().contains(payment)) {
-            throw new IllegalArgumentException("Р’С‹Р±СЂР°РЅРЅС‹Р№ СЃРїРѕСЃРѕР± РѕРїР»Р°С‚С‹ РЅРµРґРѕРїСѓСЃС‚РёРј РґР»СЏ РІС‹Р±СЂР°РЅРЅРѕРіРѕ СЃРїРѕСЃРѕР±Р° РґРѕСЃС‚Р°РІРєРё");
+            throw new IllegalArgumentException("Выбранный способ оплаты недопустим для выбранного способа доставки");
         }
 
         Order order = new Order();
         order.setUser(currentUser);
         if (address == null || address.isEmpty()) {
-            throw new IllegalArgumentException("РќРµРѕР±С…РѕРґРёРјРѕ РІРІРµСЃС‚Рё Р°РґСЂРµСЃ");
+            throw new IllegalArgumentException("Необходимо ввести адрес");
         }
-        else if (delivery.getId().equals(1L)) {  // Р•СЃР»Рё РІС‹Р±СЂР°РЅ СЃР°РјРѕРІС‹РІРѕР·
-            // Р’Р°Р»РёРґР°С†РёСЏ Р°РґСЂРµСЃР° СЃР°РјРѕРІС‹РІРѕР·Р° С‡РµСЂРµР· DaData
+        else if (delivery.getId().equals(1L)) {  // Если выбран самовывоз
+            // Валидация адреса самовывоза через DaData
             String validatedAddress = daDataService.validateAddress(address);
 
             if (!pickupLocationRepository.findByAddress(validatedAddress).isPresent()) {
-                throw new IllegalArgumentException("РўР°РєРѕРіРѕ РїСѓРЅРєС‚Р° СЃР°РјРѕРІС‹РІРѕР·Р° РЅРµС‚");
+                throw new IllegalArgumentException("Такого пункта самовывоза нет");
             }
-            order.setAddress(validatedAddress);  // РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј РїСЂРѕРІРµСЂРµРЅРЅС‹Р№ Р°РґСЂРµСЃ
+            order.setAddress(validatedAddress);  // Устанавливаем проверенный адрес
         }
         else {
             order.setAddress(daDataService.validateAddress(address));

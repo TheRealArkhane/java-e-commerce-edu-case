@@ -21,7 +21,7 @@ public class AdminCategoryService {
 
     public CategoryDTO updateCategory(Long id, CategoryDTO categoryDTO) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException("РљР°С‚РµРіРѕСЂРёСЏ СЃ id: " + id + " РЅРµ РЅР°Р№РґРµРЅР°"));
+                .orElseThrow(() -> new CategoryNotFoundException("Категория с id: " + id + " не найдена"));
 
         category.setName(categoryDTO.getName());
         categoryRepository.save(category);
@@ -34,10 +34,10 @@ public class AdminCategoryService {
 
         if (categoryDTO.getParent() != null) {
             Category parentCategory = categoryRepository.findById(categoryDTO.getParent().getId())
-                    .orElseThrow(() -> new CategoryNotFoundException("Р РѕРґРёС‚РµР»СЊСЃРєР°СЏ РєР°С‚РµРіРѕСЂРёСЏ СЃ id: "
-                            + categoryDTO.getParent().getId() + " РЅРµ РЅР°Р№РґРµРЅР°"));
+                    .orElseThrow(() -> new CategoryNotFoundException("Родительская категория с id: "
+                            + categoryDTO.getParent().getId() + " не найдена"));
             newCategory.setParent(parentCategory);
-            parentCategory.getChildren().add(newCategory); // Р”РѕР±Р°РІР»СЏРµРј РЅРѕРІСѓСЋ РєР°С‚РµРіРѕСЂРёСЋ РІ СЃРїРёСЃРѕРє РґРѕС‡РµСЂРЅРёС…
+            parentCategory.getChildren().add(newCategory); // Добавляем новую категорию в список дочерних
         }
         else {
             newCategory.setParent(null);
@@ -50,10 +50,10 @@ public class AdminCategoryService {
     public void deleteCategory(Long id) {
 
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException("РљР°С‚РµРіРѕСЂРёСЏ СЃ id: " + id + " РЅРµ РЅР°Р№РґРµРЅР°"));
+                .orElseThrow(() -> new CategoryNotFoundException("Категория с id: " + id + " не найдена"));
 
         if (!category.getChildren().isEmpty()) {
-            throw new IllegalStateException("РљР°С‚РµРіРѕСЂРёСЏ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ СѓРґР°Р»РµРЅР°, С‚Р°Рє РєР°Рє Сѓ РЅРµС‘ РµСЃС‚СЊ РґРѕС‡РµСЂРЅРёРµ РєР°С‚РµРіРѕСЂРёРё.");
+            throw new IllegalStateException("Категория не может быть удалена, так как у неё есть дочерние категории.");
         }
 
         List<Product> productsInCategory = productRepository.findByCategoryId(id);

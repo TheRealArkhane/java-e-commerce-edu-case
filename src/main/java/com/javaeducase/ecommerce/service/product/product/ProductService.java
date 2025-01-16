@@ -36,18 +36,18 @@ public class ProductService {
 
     public ProductDTO getProductById(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("РўРѕРІР°СЂ СЃ id: " + id + " РЅРµ РЅР°Р№РґРµРЅ"));
+                .orElseThrow(() -> new ProductNotFoundException("Товар с id: " + id + " не найден"));
         if (product.getIsDeleted()) {
-            throw new ProductIsDeletedException("РўРѕРІР°СЂ Р±С‹Р» СЂР°РЅРµРµ СѓРґР°Р»РµРЅ");
+            throw new ProductIsDeletedException("Товар был ранее удален");
         }
         return ProductUtils.convertProductToProductDTO(product);
     }
 
     public List<OfferDTO> getAllOffersOfProduct(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("РўРѕРІР°СЂ СЃ id: " + id + " РЅРµ РЅР°Р№РґРµРЅ"));
+                .orElseThrow(() -> new ProductNotFoundException("Товар с id: " + id + " не найден"));
         if (product.getIsDeleted()) {
-            throw new ProductIsDeletedException("РўРѕРІР°СЂ Р±С‹Р» СЂР°РЅРµРµ СѓРґР°Р»РµРЅ");
+            throw new ProductIsDeletedException("Товар был ранее удален");
         }
         return product.getOffers().stream()
                 .map(CommonAllProductLinkedUtils::convertOfferToOfferDTO)

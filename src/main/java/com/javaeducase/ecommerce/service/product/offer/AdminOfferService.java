@@ -33,15 +33,15 @@ public class AdminOfferService {
         int price = createOfferRequestDTO.getPrice();
         int stockQuantity = createOfferRequestDTO.getStockQuantity();
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException("РўРѕРІР°СЂ СЃ id: " + productId + " РЅРµ РЅР°Р№РґРµРЅ"));
+                .orElseThrow(() -> new ProductNotFoundException("Товар с id: " + productId + " не найден"));
         newOffer.setProduct(product);
         if (price < 0) {
-            throw new IllegalArgumentException("Р¦РµРЅР° РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅРѕР№");
+            throw new IllegalArgumentException("Цена не может быть отрицательной");
         }
         newOffer.setPrice(price);
 
         if (stockQuantity < 0) {
-            throw new IllegalArgumentException("Р—РЅР°С‡РµРЅРёРµ РєРѕР»РёС‡РµСЃС‚РІР° РЅР° СЃРєР»Р°РґРµ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅС‹Рј");
+            throw new IllegalArgumentException("Значение количества на складе не может быть отрицательным");
         } else if (stockQuantity > 0) {
             newOffer.setStockQuantity(stockQuantity);
             newOffer.setIsAvailable(true);
@@ -60,14 +60,14 @@ public class AdminOfferService {
 
         if (offerDTO.getPrice() != null) {
             if (offerDTO.getPrice() < 0) {
-                throw new IllegalArgumentException("Р¦РµРЅР° РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅРѕР№");
+                throw new IllegalArgumentException("Цена не может быть отрицательной");
             }
             updatingOffer.setPrice(offerDTO.getPrice());
         }
 
         if (offerDTO.getStockQuantity() != null) {
             if (offerDTO.getStockQuantity() < 0) {
-                throw new IllegalArgumentException("Р—РЅР°С‡РµРЅРёРµ РєРѕР»РёС‡РµСЃС‚РІР° РЅР° СЃРєР»Р°РґРµ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅС‹Рј");
+                throw new IllegalArgumentException("Значение количества на складе не может быть отрицательным");
             }
             if (!updatingOffer.getIsAvailable() && offerDTO.getStockQuantity() > 0) {
                 updatingOffer.setIsAvailable(true);
@@ -87,7 +87,7 @@ public class AdminOfferService {
 
         Offer offer = getOfferByIdCheckIsDeleted(offerId);
         Attribute attribute = attributeRepository.findById(attributeId)
-                .orElseThrow(() -> new AttributeNotFoundException("РђС‚СЂРёР±СѓС‚ СЃ id: " + attributeId + " РЅРµ РЅР°Р№РґРµРЅ"));
+                .orElseThrow(() -> new AttributeNotFoundException("Атрибут с id: " + attributeId + " не найден"));
 
         offer.getAttributes().add(attribute);
         Offer updatedOffer = offerRepository.save(offer);
@@ -101,13 +101,13 @@ public class AdminOfferService {
 
         Offer offer = getOfferByIdCheckIsDeleted(offerId);
         Attribute attribute = attributeRepository.findById(attributeId)
-                .orElseThrow(() -> new AttributeNotFoundException("РђС‚СЂРёР±СѓС‚ СЃ id: " + attributeId + " РЅРµ РЅР°Р№РґРµРЅ"));
+                .orElseThrow(() -> new AttributeNotFoundException("Атрибут с id: " + attributeId + " не найден"));
 
         if (offer.getAttributes().remove(attribute)) {
             offerRepository.save(offer);
             return CommonAllProductLinkedUtils.convertOfferToOfferDTO(offer);
         }
-        else throw new AttributeNotFoundException("РђС‚СЂРёР±СѓС‚ СЃ id: " + attributeId + " РЅРµ РЅР°Р№РґРµРЅ РІ РїСЂРµРґР»РѕР¶РµРЅРёРё СЃ id: " + offerId);
+        else throw new AttributeNotFoundException("Атрибут с id: " + attributeId + " не найден в предложении с id: " + offerId);
     }
 
     public void deleteOffer(Long offerId) {
@@ -123,7 +123,7 @@ public class AdminOfferService {
                 .orElseThrow(() -> new OfferNotFoundException("Offer with id: " + offerId + " not found"));
 
         if (offer.getIsDeleted()) {
-            throw new OfferIsDeletedException("РџСЂРµРґР»РѕР¶РµРЅРёРµ СЃ id: " + offer.getId() + " Р±С‹Р»Рѕ СѓРґР°Р»РµРЅРѕ");
+            throw new OfferIsDeletedException("Предложение с id: " + offer.getId() + " было удалено");
         }
         return offer;
     }

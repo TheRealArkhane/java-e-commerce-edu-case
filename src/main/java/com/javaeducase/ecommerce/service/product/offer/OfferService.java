@@ -28,7 +28,7 @@ public class OfferService {
 
     public List<AttributeDTO> getAttributesByOfferId(Long offerId) {
         List<Attribute> attributes = offerRepository.findById(offerId)
-                .orElseThrow(() -> new OfferNotFoundException("ΠΡ„Ρ„ΠµΡ€ Ρ id: " + offerId + " Π½Πµ Π½Π°ΠΉΠ΄ΠµΠ½")).getAttributes();
+                .orElseThrow(() -> new OfferNotFoundException("Ξττεπ ρ id: " + offerId + " νε νΰιδεν")).getAttributes();
         List<AttributeDTO> attributesDTO = new ArrayList<>();
         for (Attribute attribute : attributes) {
             attributesDTO.add(CommonAllProductLinkedUtils.convertAttributeToAttributeDTO(attribute));
