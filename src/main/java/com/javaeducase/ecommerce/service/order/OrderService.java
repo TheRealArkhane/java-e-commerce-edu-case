@@ -72,14 +72,13 @@ public class OrderService {
         if (address == null || address.isEmpty()) {
             throw new IllegalArgumentException("Необходимо ввести адрес");
         }
-        else if (delivery.getId().equals(1L)) {  // Если выбран самовывоз
-            // Валидация адреса самовывоза через DaData
+        else if (delivery.getId().equals(1L)) {
             String validatedAddress = daDataService.validateAddress(address);
 
             if (!pickupLocationRepository.findByAddress(validatedAddress).isPresent()) {
                 throw new IllegalArgumentException("Такого пункта самовывоза нет");
             }
-            order.setAddress(validatedAddress);  // Устанавливаем проверенный адрес
+            order.setAddress(validatedAddress);
         }
         else {
             order.setAddress(daDataService.validateAddress(address));
