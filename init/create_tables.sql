@@ -142,13 +142,11 @@ CREATE TABLE IF NOT EXISTS order_details (
     );
 
 
--- 1. Загрузка данных для таблицы app_users
 COPY app_users(id,email,first_name,is_deleted,last_name,password,role)
     FROM '/docker-entrypoint-initdb.d/fulfillment/app_users.csv'
     DELIMITER ','
     CSV HEADER;
 
--- 3. Загрузка данных для таблицы categories
 COPY categories(id,name,parent_id)
     FROM '/docker-entrypoint-initdb.d/fulfillment/categories.csv'
     DELIMITER ','
@@ -159,43 +157,36 @@ COPY products(id,name,description,category_id,is_deleted)
     DELIMITER ','
     CSV HEADER;
 
--- 2. Загрузка данных для таблицы attributes
 COPY attributes(id,name,value)
     FROM '/docker-entrypoint-initdb.d/fulfillment/attributes.csv'
     DELIMITER ','
     CSV HEADER;
 
--- 7. Загрузка данных для таблицы offers
 COPY offers(id,is_available,is_deleted,price,stock_quantity,product_id)
     FROM '/docker-entrypoint-initdb.d/fulfillment/offers.csv'
     DELIMITER ','
     CSV HEADER;
 
--- 6. Загрузка данных для таблицы offer_attributes
 COPY offer_attributes(offer_id,attribute_id)
     FROM '/docker-entrypoint-initdb.d/fulfillment/offer_attributes.csv'
     DELIMITER ','
     CSV HEADER;
 
--- 4. Загрузка данных для таблицы deliveries
 COPY deliveries(id,delivery_price,name)
     FROM '/docker-entrypoint-initdb.d/fulfillment/deliveries.csv'
     DELIMITER ','
     CSV HEADER;
 
--- 8. Загрузка данных для таблицы payments
 COPY payments(id,name)
     FROM '/docker-entrypoint-initdb.d/fulfillment/payments.csv'
     DELIMITER ','
     CSV HEADER;
 
--- 5. Загрузка данных для таблицы delivery_payments
 COPY delivery_payments(delivery_id,payment_id)
     FROM '/docker-entrypoint-initdb.d/fulfillment/delivery_payments.csv'
     DELIMITER ','
     CSV HEADER;
 
--- 9. Загрузка данных для таблицы pickup_locations
 COPY pickup_locations(id,address,delivery_id,name)
     FROM '/docker-entrypoint-initdb.d/fulfillment/pickup_locations.csv'
     DELIMITER ','
