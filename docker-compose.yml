@@ -6,7 +6,7 @@ services:
     image: postgres:latest
     container_name: 'java-postgres-db'
     volumes:
-      - '/postgres_data:/var/lib/postgresql'
+      - './init:/docker-entrypoint-initdb.d'
     environment:
       - 'SPRING_JPA_HIBERNATE_DDL_AUTO=update'
       - 'POSTGRES_USER=postgres'

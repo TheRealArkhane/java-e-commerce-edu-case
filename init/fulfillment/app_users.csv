@@ -1,0 +1,9 @@
+id,email,first_name,is_deleted,last_name,password,role
+4,illusiveman@user.dev,Джеймс,false,Харпер,"$2a$10$WY3ixuq8HhrJEKsX4aw7je1So8Yz89BTluQQSFnmGIDrKvS/GnOuS",0
+6,leeeennnnyyyyyyyy@user.dev,Артур,false,Морган,"$2a$10$aU2R.mjS0UJcVr6moOSqG.zAMsQuowcYK1wzqNanu47Lv/ukpASVq",0
+2,fedyan@user.dev,Виктор,false,Федянин,"$2a$10$vapIocywXpE5f7pS6cZa6OuK205NpTipkoppMnMemvvqcyrR2fIFK",1
+1,admin@adm.dev,Администратор,false,Аднимистраторовский,"$2a$10$aUytZ903HZeXVV9moU35WePpiUDy6lg1KtQEfuUIGpAQEHliGVLDq",1
+5,elisium@user.dev,Рафаэль Амброзиус,true,Кусто,"$2a$10$A60GXgbQmIRgtMeBNNXaY.lpPP5laXTzA6FQ5UgFbp6aAaDWCbJIW",0
+3,everybodylies@user.dev,Грегори,true,Хаус,"$2a$10$OKh8DFuESIzEmPBWTDkWgula2tbPdJV83RuLnofdpbZFskFdpSpR.",0
+7,a-formed-galaxy@user.dev,Иван,false,Милованов,"$2a$10$S5jBmRR0cxpf7qWZfqal3Oqn2arpbO/uALjj3EL.48y.Qw.CIzmNS",0
+8,pr0rok-SuMboi@user.dev,Геннадий,false,Чернецов,"$2a$10$n2lWPXAz0KxCtXwaUPGUo.6X3fZOzhKh0/GXor52a1hCKItM6yEFW",0
