@@ -106,6 +106,9 @@ public class OrderService {
         cart.getItems().forEach(cartItem -> {
             Offer offer = cartItem.getOffer();
             int remainingStock = offer.getStockQuantity() - cartItem.getQuantity();
+            if (remainingStock == 0) {
+                offer.setIsAvailable(false);
+            }
             offer.setStockQuantity(remainingStock);
             offerRepository.save(offer);
         });
