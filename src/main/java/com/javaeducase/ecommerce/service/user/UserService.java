@@ -30,9 +30,9 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        log.info("Loading user with email: {}", email);
+        log.info("Loading user with email: {}...", email);
         User user = getUserWithEmailAndIsDeletedCheck(email);
-        log.info("User with email: {} successfully loaded", email);
+        log.info("User with email: {} successfully logged in", email);
 
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
@@ -42,7 +42,7 @@ public class UserService implements UserDetailsService {
     }
 
     public User getCurrentUser() {
-        log.info("Fetching current user");
+        log.info("Fetching current user...");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof UserDetails)) {
             log.error("Current user not found in security context");
@@ -50,42 +50,43 @@ public class UserService implements UserDetailsService {
         }
 
         String email = ((UserDetails) authentication.getPrincipal()).getUsername();
-        log.info("Searching for user with email: {}", email);
+        log.info("Searching for user with email: {}...", email);
         return getUserWithEmailAndIsDeletedCheck(email);
     }
 
     public void changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) {
-        log.info("Changing password for current user");
+        log.info("Changing password for current user...");
 
         String oldPassword = changePasswordRequestDTO.getOldPassword();
         String newPassword = changePasswordRequestDTO.getNewPassword();
         User currentUser = getCurrentUser();
 
-        log.info("Checking old password for user with email: {}", currentUser.getEmail());
+        log.info("Checking old password for user with email: {}...", currentUser.getEmail());
         UserUtils.checkPasswords(oldPassword, newPassword, currentUser.getPassword(), passwordEncoder);
 
-        log.info("Setting new password for user with email: {}", currentUser.getEmail());
+        log.info("Setting new password for user with email: {}...", currentUser.getEmail());
         currentUser.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(currentUser);
         log.info("Password for user with email: {} successfully changed", currentUser.getEmail());
     }
 
     public UserDTO getUserByEmail(String email) {
-        log.info("Fetching user data by email: {}", email);
+        log.info("Fetching user by email: {}...", email);
         User user = getUserWithEmailAndIsDeletedCheck(email);
         log.info("User with email: {} successfully found", email);
         return UserUtils.convertToDTO(user);
     }
 
     public UserDTO updateCurrentUser(UserDTO userDTO) {
-        log.info("Updating current user data");
+        log.info("Updating data of current user...");
         User currentUser = getCurrentUser();
         if (!currentUser.getEmail().equals(userDTO.getEmail())) {
-            log.info("Validating new email for user with email: {}", currentUser.getEmail());
+            log.info("Validating new email for user with email: {}...", currentUser.getEmail());
             UserUtils.validateEmail(userDTO.getEmail());
             UserUtils.checkEmailExists(userDTO.getEmail(), userRepository);
+            log.info("Email validated");
             currentUser.setEmail(userDTO.getEmail());
-            log.info("New email for user: {}", userDTO.getEmail());
+            log.info("New email: {} is successfully changed", userDTO.getEmail());
         }
 
         currentUser.setFirstName(userDTO.getFirstName());
@@ -96,11 +97,8 @@ public class UserService implements UserDetailsService {
     }
 
     public void deleteCurrentUser() {
-        log.info("Deleting current user");
-
         User currentUser = getCurrentUser();
-        log.info("Deleting user with email: {}", currentUser.getEmail());
-
+        log.info("Deleting user with email: {}...", currentUser.getEmail());
         currentUser.setDeleted(true);
         userRepository.save(currentUser);
         log.info("User with email: {} successfully deleted", currentUser.getEmail());
@@ -108,16 +106,10 @@ public class UserService implements UserDetailsService {
 
     private User getUserWithEmailAndIsDeletedCheck(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> {
-                    log.warn("User with email: {} not found", email);
-                    return new UserNotFoundException("User with email: " + email + " not found");
-                });
-
+                .orElseThrow(() ->  new UserNotFoundException("User with email: " + email + " not found"));
         if (user.isDeleted()) {
-            log.warn("User with email: {} is deleted", email);
             throw new UserIsDeletedException("User is deleted");
         }
-
         return user;
     }
 }

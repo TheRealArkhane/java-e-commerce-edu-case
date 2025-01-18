@@ -25,7 +25,7 @@ public class AdminProductService {
     private final CategoryRepository categoryRepository;
 
     public ProductDTO createProduct(ProductDTO productDTO) {
-        log.info("Creating product with name: {}", productDTO.getName());
+        log.info("Creating product with name: {}...", productDTO.getName());
         Category category = categoryRepository.findById(productDTO.getCategory().getId())
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
 
@@ -41,7 +41,7 @@ public class AdminProductService {
     }
 
     public ProductDTO updateProduct(Long id, ProductDTO productDTO) {
-        log.info("Updating product with id: {}", id);
+        log.info("Updating product with id: {}...", id);
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Product with id: " + id + " not found"));
 
@@ -61,7 +61,7 @@ public class AdminProductService {
     }
 
     public void deleteProduct(Long id) {
-        log.info("Deleting product with id: {}", id);
+        log.info("Deleting product with id: {}...", id);
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Product with id: " + id + " not found"));
 

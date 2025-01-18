@@ -42,7 +42,7 @@ public class ProductService {
     }
 
     public ProductDTO getProductById(Long id) {
-        log.info("Fetching product with id: {}", id);
+        log.info("Fetching product with id: {}...", id);
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Product with id: " + id + " not found"));
         if (product.getIsDeleted()) {
@@ -53,7 +53,7 @@ public class ProductService {
     }
 
     public List<OfferDTO> getAllOffersOfProduct(Long id) {
-        log.info("Fetching offers for product with id: {}", id);
+        log.info("Fetching offers for product with id: {}...", id);
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Product with id: " + id + " not found"));
         if (product.getIsDeleted()) {

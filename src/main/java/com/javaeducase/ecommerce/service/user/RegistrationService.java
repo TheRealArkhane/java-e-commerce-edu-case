@@ -20,10 +20,9 @@ public class RegistrationService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     public UserDTO registerUser(RegistrationDTO registrationDTO) {
-        log.info("Starting registration for user with email: {}", registrationDTO.getEmail());
+        log.info("Starting registration for user with email: {}...", registrationDTO.getEmail());
         UserUtils.validateEmail(registrationDTO.getEmail());
         if (userRepository.findByEmail(registrationDTO.getEmail()).isPresent()) {
-            log.warn("User with email: {} already exists", registrationDTO.getEmail());
             throw new IllegalArgumentException("User with this email already exists");
         }
 
