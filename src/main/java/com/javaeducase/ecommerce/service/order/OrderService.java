@@ -49,39 +49,39 @@ public class OrderService {
         User currentUser = userService.getCurrentUser();
 
         Cart cart = cartRepository.findByUserId(currentUser.getId())
-                .orElseThrow(() -> new CartNotFoundException("У пользователя отсутствует корзина"));
+                .orElseThrow(() -> new CartNotFoundException("Cart not found"));
 
         if (cart.getItems().isEmpty()) {
-            throw new IllegalArgumentException("Корзина пуста, необходимо заполнить ее товаром");
+            throw new IllegalArgumentException("Cart is empty");
         }
 
         Delivery delivery = deliveryRepository.findById(deliveryId)
-                .orElseThrow(() -> new DeliveryNotFoundException("Не найден способ доставки с id: " + deliveryId));
+                .orElseThrow(() -> new DeliveryNotFoundException("Do not found delivery with id: " + deliveryId));
 
         Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new PaymentNotFoundException("Не найден способ доставки с id: " + paymentId));
+                .orElseThrow(() -> new PaymentNotFoundException("Do not found payment with id: " + paymentId));
 
         if (!delivery.getPayments().contains(payment)) {
-            throw new IllegalArgumentException("Выбранный способ оплаты недопустим для выбранного способа доставки");
+            throw new IllegalArgumentException("The selected payment method is not allowed for the chosen delivery method");
         }
 
         Order order = new Order();
         order.setUser(currentUser);
         String daDataAddress = daDataService.validateAddress(address);
         if (daDataAddress == null || daDataAddress.isEmpty()) {
-            throw new IllegalArgumentException("Необходимо ввести адрес");
+            throw new IllegalArgumentException("An address is required");
         }
         else if (Objects.equals(delivery.getName(), "Самовывоз")) {
             PickupLocation pickupLocation = pickupLocationRepository.findByAddress(daDataAddress).orElse(null);
             if (pickupLocation == null) {
-                throw new IllegalArgumentException("Такого пункта самовывоза нет");
+                throw new IllegalArgumentException("There is no such pickup location");
             }
             order.setAddress(daDataAddress);
             order.setPickupLocation(pickupLocation.getName());
         }
         else {
             if (pickupLocationRepository.findAllAddress().contains(daDataAddress)) {
-                throw new IllegalArgumentException("Нельзя заказать доставку на адрес самовывоза");
+                throw new IllegalArgumentException("Delivery cannot be ordered to a pickup location address");
             }
             order.setAddress(daDataAddress);
             order.setPickupLocation(null);

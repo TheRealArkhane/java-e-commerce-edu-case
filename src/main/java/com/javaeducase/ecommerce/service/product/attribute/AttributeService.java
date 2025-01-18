@@ -27,7 +27,7 @@ public class AttributeService {
 
     public AttributeDTO getAttributeById(Long id) {
         Attribute attribute = attributeRepository.findById(id)
-                .orElseThrow(() -> new AttributeNotFoundException("Атрибут с id: " + id + " не найден"));
+                .orElseThrow(() -> new AttributeNotFoundException("Attribute with id: " + id + " not found"));
         return CommonAllProductLinkedUtils.convertAttributeToAttributeDTO(attribute);
     }
 }

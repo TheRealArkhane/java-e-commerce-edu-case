@@ -21,7 +21,7 @@ public class RegistrationService {
     public UserDTO registerUser(RegistrationDTO registrationDTO) {
         UserUtils.validateEmail(registrationDTO.getEmail());
         if (userRepository.findByEmail(registrationDTO.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("ѕользователь с таким email уже существует");
+            throw new IllegalArgumentException("User with this email already exists");
         }
         User user = new User();
         user.setFirstName(registrationDTO.getFirstName());

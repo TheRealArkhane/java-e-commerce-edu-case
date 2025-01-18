@@ -29,13 +29,13 @@ public class CategoryService {
 
     public CategoryDTO getCategoryById(Long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException("Категория с id: " + id + " не найдена"));
+                .orElseThrow(() -> new CategoryNotFoundException("Category with id: " + id + " not found"));
         return CommonAllProductLinkedUtils.convertCategoryToCategoryDTO(category);
     }
 
     public List<CategoryDTO> getCategoryChildren(Long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException("Категория с id: " + id + " не найдена"));
+                .orElseThrow(() -> new CategoryNotFoundException("Category with id: " + id + " not found"));
         return category.getChildren().stream()
                 .map(CommonAllProductLinkedUtils::convertCategoryToCategoryDTO)
                 .collect(Collectors.toList());
@@ -43,7 +43,7 @@ public class CategoryService {
 
     public List<ProductDTO> getCategoryProducts(Long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException("Категория с id: " + id + " не найдена"));
+                .orElseThrow(() -> new CategoryNotFoundException("Category with id: " + id + " not found"));
         return category.getProducts().stream()
                 .map(ProductUtils::convertProductToProductDTO)
                 .collect(Collectors.toList());

@@ -21,7 +21,7 @@ public class AdminCategoryService {
 
     public CategoryDTO updateCategory(Long id, CategoryDTO categoryDTO) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException("Категория с id: " + id + " не найдена"));
+                .orElseThrow(() -> new CategoryNotFoundException("Category with id: " + id + " not found"));
 
         category.setName(categoryDTO.getName());
         categoryRepository.save(category);
@@ -34,8 +34,8 @@ public class AdminCategoryService {
 
         if (categoryDTO.getParent() != null) {
             Category parentCategory = categoryRepository.findById(categoryDTO.getParent().getId())
-                    .orElseThrow(() -> new CategoryNotFoundException("Родительская категория с id: "
-                            + categoryDTO.getParent().getId() + " не найдена"));
+                    .orElseThrow(() -> new CategoryNotFoundException("Parent category with id: "
+                            + categoryDTO.getParent().getId() + " not found"));
             newCategory.setParent(parentCategory);
             parentCategory.getChildren().add(newCategory); // Добавляем новую категорию в список дочерних
         }
@@ -50,10 +50,10 @@ public class AdminCategoryService {
     public void deleteCategory(Long id) {
 
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException("Категория с id: " + id + " не найдена"));
+                .orElseThrow(() -> new CategoryNotFoundException("Category with id: " + id + " not found"));
 
         if (!category.getChildren().isEmpty()) {
-            throw new IllegalStateException("Категория не может быть удалена, так как у неё есть дочерние категории.");
+            throw new IllegalStateException("Category cannot be deleted because it has children subcategories");
         }
 
         List<Product> productsInCategory = productRepository.findByCategoryId(id);

@@ -23,13 +23,13 @@ public class AdminAttributeService {
 
     public AttributeDTO updateAttribute(Long id, AttributeDTO attributeDTO) {
         Attribute attribute = attributeRepository.findById(id)
-                .orElseThrow(() -> new AttributeNotFoundException("Атрибут с id: " + id + " не найден"));
+                .orElseThrow(() -> new AttributeNotFoundException("Attribute with id: " + id + " not found"));
 
         String newName = attributeDTO.getName();
         String newValue = attributeDTO.getValue();
 
         if (attributeRepository.existsByNameAndValue(newName, newValue)) {
-            throw new DuplicateAttributeException("Атрибут с таким именем и значением уже существует.");
+            throw new DuplicateAttributeException("Attribute with name: " + newName + " already exists");
         }
 
         attribute.setName(newName);

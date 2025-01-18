@@ -26,7 +26,7 @@ public class AdminProductService {
 
     public ProductDTO createProduct(ProductDTO productDTO) {
         Category category = categoryRepository.findById(productDTO.getCategory().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Категория не найдена"));
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
 
         Product product = new Product();
         product.setName(productDTO.getName());
@@ -41,14 +41,14 @@ public class AdminProductService {
 
     public ProductDTO updateProduct(Long id, ProductDTO productDTO) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Товар с id: " + id + " не найден"));
+                .orElseThrow(() -> new ProductNotFoundException("Product with id: " + id + " not found"));
 
         if (product.getIsDeleted()) {
             throw new ProductIsDeletedException("Товар был ранее удален");
         }
 
         Category category = categoryRepository.findById(productDTO.getCategory().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Категория не найдена"));
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
 
         product.setName(productDTO.getName());
         product.setDescription(productDTO.getDescription());
@@ -59,10 +59,10 @@ public class AdminProductService {
 
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Товар с id: " + id + " не найден"));
+                .orElseThrow(() -> new ProductNotFoundException("Product with id: " + id + " not found"));
 
         if (product.getIsDeleted()) {
-            throw new ProductIsDeletedException("Товар был ранее удален");
+            throw new ProductIsDeletedException("Product is deleted");
         }
 
         product.setIsDeleted(true);

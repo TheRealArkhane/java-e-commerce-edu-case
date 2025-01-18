@@ -31,19 +31,19 @@ public class AdminUserService {
 
     public UserDTO getUserById(Long id) {
         return UserUtils.convertToDTO(userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден")));
+                .orElseThrow(() -> new UserNotFoundException("User with id: " + id + " not found")));
     }
 
     public void changeUserPassword(Long id, ChangePasswordRequestDTO request) {
         String oldPassword = request.getOldPassword();
         String newPassword = request.getNewPassword();
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
+                .orElseThrow(() -> new UserNotFoundException("User with id: " + id + " not found"));
         if (user.isDeleted()) {
-            throw new UserIsDeletedException("Пользователь ранее был удален");
+            throw new UserIsDeletedException("User is deleted");
         }
         if (user.getRole().name().equals("ADMIN")) {
-            throw new InsufficientAdminPrivilegesException("Администратор не может изменять данные другого администратора");
+            throw new InsufficientAdminPrivilegesException("Admin cannot change data of another admin");
         }
         UserUtils.checkPasswords(oldPassword, newPassword, user.getPassword(), passwordEncoder);
         user.setPassword(passwordEncoder.encode(newPassword));
@@ -52,12 +52,12 @@ public class AdminUserService {
 
     public UserDTO updateUser(Long id, UserDTO userDTO) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
+                .orElseThrow(() -> new UserNotFoundException("User with id: " + id + " not found"));
         if (user.isDeleted()) {
-            throw new UserIsDeletedException("Пользователь ранее был удален");
+            throw new UserIsDeletedException("User is deleted");
         }
         if (user.getRole().name().equals("ADMIN")) {
-            throw new InsufficientAdminPrivilegesException("Администратор не может изменять данные другого администратора");
+            throw new InsufficientAdminPrivilegesException("Admin cannot change data of another admin");
         }
         UserUtils.validateEmail(userDTO.getEmail());
         UserUtils.checkEmailExists(userDTO.getEmail(), userRepository);
@@ -70,12 +70,12 @@ public class AdminUserService {
 
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
+                .orElseThrow(() -> new UserNotFoundException("User with id: " + id + " not found"));
         if (user.isDeleted()) {
-            throw new UserIsDeletedException("Пользователь ранее был удален");
+            throw new UserIsDeletedException("User is deleted");
         }
         if (user.getRole().name().equals("ADMIN")) {
-            throw new InsufficientAdminPrivilegesException("Администратор не может удалять данные другого администратора");
+            throw new InsufficientAdminPrivilegesException("Admin cannot delete another admin");
         }
         user.setDeleted(true);
         userRepository.save(user);

@@ -33,15 +33,15 @@ public class AdminOfferService {
         int price = createOfferRequestDTO.getPrice();
         int stockQuantity = createOfferRequestDTO.getStockQuantity();
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException("Товар с id: " + productId + " не найден"));
+                .orElseThrow(() -> new ProductNotFoundException("Offer with id: " + productId + " not found"));
         newOffer.setProduct(product);
         if (price < 0) {
-            throw new IllegalArgumentException("Цена не может быть отрицательной");
+            throw new IllegalArgumentException("Price cannot be negative");
         }
         newOffer.setPrice(price);
 
         if (stockQuantity < 0) {
-            throw new IllegalArgumentException("Значение количества на складе не может быть отрицательным");
+            throw new IllegalArgumentException("Stock quantity cannot be negative");
         } else if (stockQuantity > 0) {
             newOffer.setStockQuantity(stockQuantity);
             newOffer.setIsAvailable(true);
@@ -60,14 +60,14 @@ public class AdminOfferService {
 
         if (offerDTO.getPrice() != null) {
             if (offerDTO.getPrice() < 0) {
-                throw new IllegalArgumentException("Цена не может быть отрицательной");
+                throw new IllegalArgumentException("Price cannot be negative");
             }
             updatingOffer.setPrice(offerDTO.getPrice());
         }
 
         if (offerDTO.getStockQuantity() != null) {
             if (offerDTO.getStockQuantity() < 0) {
-                throw new IllegalArgumentException("Значение количества на складе не может быть отрицательным");
+                throw new IllegalArgumentException("Stock quantity cannot be negative");
             }
             if (!updatingOffer.getIsAvailable() && offerDTO.getStockQuantity() > 0) {
                 updatingOffer.setIsAvailable(true);
@@ -87,7 +87,7 @@ public class AdminOfferService {
 
         Offer offer = getOfferByIdCheckIsDeleted(offerId);
         Attribute attribute = attributeRepository.findById(attributeId)
-                .orElseThrow(() -> new AttributeNotFoundException("Атрибут с id: " + attributeId + " не найден"));
+                .orElseThrow(() -> new AttributeNotFoundException("Attribute with id: " + attributeId + " not found"));
 
         offer.getAttributes().add(attribute);
         Offer updatedOffer = offerRepository.save(offer);
@@ -101,13 +101,16 @@ public class AdminOfferService {
 
         Offer offer = getOfferByIdCheckIsDeleted(offerId);
         Attribute attribute = attributeRepository.findById(attributeId)
-                .orElseThrow(() -> new AttributeNotFoundException("Атрибут с id: " + attributeId + " не найден"));
+                .orElseThrow(() -> new AttributeNotFoundException("Attribute with id: " + attributeId + " not found"));
 
         if (offer.getAttributes().remove(attribute)) {
             offerRepository.save(offer);
             return CommonAllProductLinkedUtils.convertOfferToOfferDTO(offer);
         }
-        else throw new AttributeNotFoundException("Атрибут с id: " + attributeId + " не найден в предложении с id: " + offerId);
+        else throw new AttributeNotFoundException("Attribute with id: "
+                + attributeId
+                + " do not found in offer with id: "
+                + offerId);
     }
 
     public void deleteOffer(Long offerId) {
@@ -123,7 +126,7 @@ public class AdminOfferService {
                 .orElseThrow(() -> new OfferNotFoundException("Offer with id: " + offerId + " not found"));
 
         if (offer.getIsDeleted()) {
-            throw new OfferIsDeletedException("Предложение с id: " + offer.getId() + " было удалено");
+            throw new OfferIsDeletedException("Offer with id: " + offer.getId() + " was deleted");
         }
         return offer;
     }

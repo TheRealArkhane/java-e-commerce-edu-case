@@ -37,12 +37,12 @@ public class CartService {
         Long offerId = requestCartItemDTO.getOfferId();
 
         Cart cart = cartRepository.findByUserId(userId)
-                .orElseThrow(() -> new CartNotFoundException("Корзина пользователя с id: " + userId + " не найдена"));
+                .orElseThrow(() -> new CartNotFoundException("User cart with id: " + userId + " not found"));
 
         Offer offer = offerRepository.findById(offerId)
-                .orElseThrow(() -> new OfferNotFoundException("Товар с id: " + offerId + " не найден"));
-        if (offer.getIsDeleted()) throw new OfferIsDeletedException("Товар был ранее удален");
-        if (!offer.getIsAvailable()) throw new OfferIsUnavailableException("Товар недоступен");
+                .orElseThrow(() -> new OfferNotFoundException("Product with id: " + offerId + " not found"));
+        if (offer.getIsDeleted()) throw new OfferIsDeletedException("The product was deleted");
+        if (!offer.getIsAvailable()) throw new OfferIsUnavailableException("The product is unavailable");
 
         Optional<CartItem> existingItem = cart.getItems().stream()
                 .filter(item -> item.getOffer().getId().equals(offer.getId()))
@@ -51,9 +51,9 @@ public class CartService {
         if (existingItem.isPresent()) {
             int existingItemQuantitySum = existingItem.get().getQuantity() + quantity;
             if (existingItemQuantitySum > offer.getStockQuantity()) {
-                throw new IllegalArgumentException("Количество товара с id: "
+                throw new IllegalArgumentException("Quantity of product with id: "
                         + offer.getId()
-                        +", добавляемого в корзину, превышает его кол-во на складе");
+                        + ", being added to the cart exceeds its stock availability");
             }
             if (existingItemQuantitySum <= 0) {
                 cart.removeItem(existingItem.get());
@@ -63,12 +63,12 @@ public class CartService {
             }
         } else {
             if (quantity <= 0) {
-                throw new IllegalArgumentException("Количество добавляемого должно быть > 0");
+                throw new IllegalArgumentException("Quantity must be greater than 0");
             }
             else if (quantity > offer.getStockQuantity()) {
-                throw new IllegalArgumentException("Количество товара с id: "
+                throw new IllegalArgumentException("Quantity of product with id: "
                         + offer.getId()
-                        +" добавляемого в корзину, превышает его кол-во на складе");
+                        + " being added to the cart exceeds its stock availability");
             }
             CartItem cartItem = cartItemService.createCartItem(offer.getId(), quantity);
             cart.addItem(cartItem);

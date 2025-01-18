@@ -16,17 +16,17 @@ public class AdminCartService {
 
     public CartDTO getUserCart(Long userId) {
         Cart cart = cartRepository.findByUserId(userId)
-                .orElseThrow(() -> new CartNotFoundException("Корзина пользователя с id: "
+                .orElseThrow(() -> new CartNotFoundException("Cart of user with id: "
                         + userId
-                        + " не найдена"));
+                        + " not found"));
         return CartUtils.convertCartToCartDTO(cart);
     }
 
     public void clearUserCart(Long userId) {
         Cart cart = cartRepository.findByUserId(userId)
-                .orElseThrow(() -> new CartNotFoundException("Корзина пользователя с id: "
+                .orElseThrow(() -> new CartNotFoundException("Cart of user with id: "
                 + userId
-                + " не найдена"));
+                + " not found"));
         cart.getItems().clear();
         cart.setTotalQuantity(0);
         cart.setTotalAmount(0);

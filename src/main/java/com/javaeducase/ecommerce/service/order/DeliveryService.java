@@ -23,7 +23,7 @@ public class DeliveryService {
 
     public Delivery findById(Long id) {
         return deliveryRepository.findById(id)
-                .orElseThrow(() -> new DeliveryNotFoundException("Не найден способ доставки с id: " + id));
+                .orElseThrow(() -> new DeliveryNotFoundException("Delivery with id: " + id + " not found"));
     }
 
     public List<PickupLocation> getPickupLocations() {
