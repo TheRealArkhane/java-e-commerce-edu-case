@@ -28,13 +28,14 @@ public class User {
     @ToString.Exclude
     private String password;
 
+    @Enumerated(EnumType.ORDINAL)
     @Column(name = "role", nullable = false)
     private Role role;
 
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Cart cart;
 
     public User() {

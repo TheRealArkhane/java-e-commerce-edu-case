@@ -99,8 +99,8 @@ public class OrderService {
 
         order.setDelivery(delivery);
         order.setPayment(payment);
-        order.setTotalQuantity(cart.getTotalQuantity());
-        order.setTotalAmount(cart.getTotalAmount() + delivery.getDeliveryPrice());
+        order.setTotalQuantity(cart.calculateTotalQuantity());
+        order.setTotalAmount(cart.calculateTotalAmount() + delivery.getDeliveryPrice());
         orderRepository.save(order);
 
         cart.getItems().forEach(cartItem -> {

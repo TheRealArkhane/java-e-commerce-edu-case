@@ -20,6 +20,10 @@ public class Cart {
     private Long id;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(
+            name = "cart_items_list", // Новое имя таблицы
+            joinColumns = @JoinColumn(name = "cart_id"), // Внешний ключ на Cart
+            inverseJoinColumns = @JoinColumn(name = "cart_item_id")) // Внешний ключ на CartItem
     private List<CartItem> items = new ArrayList<>(); ;
 
     @Column(name = "total_amount")
@@ -33,11 +37,11 @@ public class Cart {
     private User user;
 
 
-    public Integer getTotalAmount() {
+    public Integer calculateTotalAmount() {
         return items.stream().mapToInt(CartItem::getTotalPrice).sum();
     }
 
-    public Integer getTotalQuantity() {
+    public Integer calculateTotalQuantity() {
         return items.stream().mapToInt(CartItem::getQuantity).sum();
     }
 

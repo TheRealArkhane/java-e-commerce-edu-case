@@ -5,8 +5,6 @@ import com.javaeducase.ecommerce.dto.cart.CartItemDTO;
 import com.javaeducase.ecommerce.entity.cart.Cart;
 import com.javaeducase.ecommerce.entity.cart.CartItem;
 import com.javaeducase.ecommerce.util.product.CommonAllProductLinkedUtils;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
@@ -15,8 +13,8 @@ public class CartUtils {
     public static CartDTO convertCartToCartDTO(Cart cart) {
         CartDTO cartDTO = new CartDTO();
         cartDTO.setItems(cart.getItems().stream().map(CartUtils::convertCartItemToCartItemDTO).collect(Collectors.toList()));
-        cartDTO.setTotalAmount(cart.getTotalAmount());
-        cartDTO.setTotalQuantity(cart.getTotalQuantity());
+        cartDTO.setTotalAmount(cart.calculateTotalAmount());
+        cartDTO.setTotalQuantity(cart.calculateTotalQuantity());
         return cartDTO;
     }
 

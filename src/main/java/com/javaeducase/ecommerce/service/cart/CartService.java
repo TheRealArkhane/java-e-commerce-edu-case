@@ -74,8 +74,8 @@ public class CartService {
             cart.addItem(cartItem);
         }
 
-        cart.setTotalAmount(cart.getTotalAmount());
-        cart.setTotalQuantity(cart.getTotalQuantity());
+        cart.setTotalAmount(cart.calculateTotalAmount());
+        cart.setTotalQuantity(cart.calculateTotalQuantity());
         cartRepository.save(cart);
         return CartUtils.convertCartToCartDTO(cart);
     }
