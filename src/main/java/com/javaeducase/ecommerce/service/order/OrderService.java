@@ -21,11 +21,13 @@ import com.javaeducase.ecommerce.service.user.UserService;
 import com.javaeducase.ecommerce.util.order.OrderUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -42,6 +44,7 @@ public class OrderService {
 
     @Transactional
     public OrderDTO createOrder(RequestOrderDTO requestOrderDTO) {
+        log.info("Creating order for request: {}...", requestOrderDTO);
 
         Long deliveryId = requestOrderDTO.getDeliveryId();
         Long paymentId = requestOrderDTO.getPaymentId();
@@ -49,60 +52,66 @@ public class OrderService {
         User currentUser = userService.getCurrentUser();
 
         Cart cart = cartRepository.findByUserId(currentUser.getId())
-                .orElseThrow(() -> new CartNotFoundException("У пользователя отсутствует корзина"));
+                .orElseThrow(() -> new CartNotFoundException("Cart not found"));
 
         if (cart.getItems().isEmpty()) {
-            throw new IllegalArgumentException("Корзина пуста, необходимо заполнить ее товаром");
+            throw new IllegalArgumentException("Cart is empty");
         }
 
         Delivery delivery = deliveryRepository.findById(deliveryId)
-                .orElseThrow(() -> new DeliveryNotFoundException("Не найден способ доставки с id: " + deliveryId));
+                .orElseThrow(() -> new DeliveryNotFoundException("Delivery with id: " + deliveryId + " not found"));
 
         Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new PaymentNotFoundException("Не найден способ доставки с id: " + paymentId));
+                .orElseThrow(() -> new PaymentNotFoundException("Payment with id: " + paymentId + " not found"));
 
         if (!delivery.getPayments().contains(payment)) {
-            throw new IllegalArgumentException("Выбранный способ оплаты недопустим для выбранного способа доставки");
+            throw new IllegalArgumentException("The selected payment method is " +
+                    "not allowed for the chosen delivery method");
         }
 
-        Order order = new Order();
-        order.setUser(currentUser);
+        log.info("Validating address with DaData service...");
         String daDataAddress = daDataService.validateAddress(address);
         if (daDataAddress == null || daDataAddress.isEmpty()) {
-            throw new IllegalArgumentException("Необходимо ввести адрес");
+            throw new IllegalArgumentException("An address is required");
         }
-        else if (Objects.equals(delivery.getName(), "Самовывоз")) {
+        log.info("Address is successfully validated");
+        Order order = new Order();
+        order.setUser(currentUser);
+
+        if (Objects.equals(delivery.getName(), "Самовывоз")) {
             PickupLocation pickupLocation = pickupLocationRepository.findByAddress(daDataAddress).orElse(null);
             if (pickupLocation == null) {
-                throw new IllegalArgumentException("Такого пункта самовывоза нет");
+                throw new IllegalArgumentException("There is no such pickup location");
             }
             order.setAddress(daDataAddress);
             order.setPickupLocation(pickupLocation.getName());
-        }
-        else {
+        } else {
             if (pickupLocationRepository.findAllAddress().contains(daDataAddress)) {
-                throw new IllegalArgumentException("Нельзя заказать доставку на адрес самовывоза");
+                throw new IllegalArgumentException("Delivery cannot be ordered to a pickup location address");
             }
             order.setAddress(daDataAddress);
             order.setPickupLocation(null);
         }
 
+        log.info("Adding order details from cart items...");
         for (CartItem cartItem : cart.getItems()) {
             OrderDetail orderDetail = new OrderDetail();
             orderDetail.setOrder(order);
             orderDetail.setOffer(cartItem.getOffer());
             orderDetail.setQuantity(cartItem.getQuantity());
             orderDetail.setTotalOfferAmount(cartItem.getTotalPrice());
-
             order.getOrderDetails().add(orderDetail);
         }
+        log.info("Order details successfully added");
 
         order.setDelivery(delivery);
         order.setPayment(payment);
         order.setTotalQuantity(cart.calculateTotalQuantity());
         order.setTotalAmount(cart.calculateTotalAmount() + delivery.getDeliveryPrice());
         orderRepository.save(order);
+        log.info("Order saved to database");
 
+        log.info("Updating stock quantities for offers...");
         cart.getItems().forEach(cartItem -> {
             Offer offer = cartItem.getOffer();
             int remainingStock = offer.getStockQuantity() - cartItem.getQuantity();
@@ -112,13 +121,21 @@ public class OrderService {
             offer.setStockQuantity(remainingStock);
             offerRepository.save(offer);
         });
+        log.info("Offers stock quantity successfully updated");
+
+        log.info("Clearing cart for user {}...", currentUser.getId());
         cartService.clearCart();
         cartRepository.save(cart);
+        log.info("Cart successfully cleared");
 
+        log.info("Order created successfully with id: {}", order.getId());
         return OrderUtils.convertOrderToOrderDTO(order);
     }
 
     public List<OrderDTO> getUserOrders(Long userId) {
-        return orderRepository.findAllByUserId(userId).stream().map(OrderUtils::convertOrderToOrderDTO).toList();
+        return orderRepository.findAllByUserId(userId).stream()
+                .map(OrderUtils::convertOrderToOrderDTO)
+                .toList();
     }
 }
+

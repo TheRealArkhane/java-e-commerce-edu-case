@@ -7,10 +7,11 @@ import com.javaeducase.ecommerce.entity.user.User;
 import com.javaeducase.ecommerce.repository.user.UserRepository;
 import com.javaeducase.ecommerce.util.user.UserUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RegistrationService {
@@ -19,10 +20,12 @@ public class RegistrationService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     public UserDTO registerUser(RegistrationDTO registrationDTO) {
+        log.info("Starting registration for user with email: {}...", registrationDTO.getEmail());
         UserUtils.validateEmail(registrationDTO.getEmail());
         if (userRepository.findByEmail(registrationDTO.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("ѕользователь с таким email уже существует");
+            throw new IllegalArgumentException("User with this email already exists");
         }
+
         User user = new User();
         user.setFirstName(registrationDTO.getFirstName());
         user.setLastName(registrationDTO.getLastName());
@@ -30,7 +33,9 @@ public class RegistrationService {
         user.setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
         user.setRole(Role.USER);
         user.setDeleted(false);
+
         User savedUser = userRepository.save(user);
+        log.info("User with email: {} successfully registered", registrationDTO.getEmail());
         return UserUtils.convertToDTO(savedUser);
     }
 }

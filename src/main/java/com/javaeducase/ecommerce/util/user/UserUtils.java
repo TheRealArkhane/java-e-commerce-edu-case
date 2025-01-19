@@ -12,22 +12,22 @@ public class UserUtils {
 
     public static void validateEmail(String email) {
         if (email == null || !email.matches(EMAIL_REGEX)) {
-            throw new IllegalArgumentException("Неправильный формат email");
+            throw new IllegalArgumentException("Wrond email format");
         }
     }
 
     public static void checkEmailExists(String email, UserRepository userRepository) {
         if (userRepository.findByEmail(email).isPresent()) {
-            throw new IllegalArgumentException("Пользователь с таким email уже существует");
+            throw new IllegalArgumentException("User with email: " + email + " not found");
         }
     }
 
     public static void checkPasswords(String oldPassword, String newPassword, String storedPassword, BCryptPasswordEncoder passwordEncoder) {
         if (!passwordEncoder.matches(oldPassword, storedPassword)) {
-            throw new IllegalArgumentException("Старый пароль неверен");
+            throw new IllegalArgumentException("Old password is incorrect");
         }
         if (passwordEncoder.matches(newPassword, storedPassword)) {
-            throw new IdenticalPasswordException("Новый пароль не может быть идентичен старому");
+            throw new IdenticalPasswordException("New password cannot be the same as old password");
         }
     }
 

@@ -21,12 +21,12 @@ public class DeliveryController {
 
     @GetMapping
     public ResponseEntity<List<Delivery>> getAllDeliveries() {
-        return ResponseEntity.ok(deliveryService.getAll());
+        return ResponseEntity.ok(deliveryService.getDeliveries());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Delivery> getDeliveryById(@PathVariable Long id) {
-        return ResponseEntity.ok(deliveryService.findById(id));
+        return ResponseEntity.ok(deliveryService.getDeliveryById(id));
     }
 
     @GetMapping("/pickup_locations")
