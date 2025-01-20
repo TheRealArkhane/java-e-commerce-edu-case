@@ -68,8 +68,6 @@ public class OrderService {
             throw new IllegalArgumentException("The selected payment method is " +
                     "not allowed for the chosen delivery method");
         }
-
-        log.info("Validating address with DaData service...");
         String daDataAddress = daDataService.validateAddress(address);
         if (daDataAddress == null || daDataAddress.isEmpty()) {
             throw new IllegalArgumentException("An address is required");
