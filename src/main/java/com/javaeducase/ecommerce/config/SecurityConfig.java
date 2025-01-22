@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,31 +31,24 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Настройка CSRF
                 .csrf(AbstractHttpConfigurer::disable)
-
-                // Настройка авторизации запросов
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/register", "/auth/login").permitAll()  // Разрешить регистрацию и вход
-                        .requestMatchers("/admin/**").hasRole("ADMIN")  // Доступ только для администратора
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/auth/register", "/auth/login").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/cart/**", "/orders/**", "/users/**").authenticated()
-                        .anyRequest().permitAll()  // Разрешить все остальные запросы
+                        .anyRequest().permitAll()
                 )
-
-                // Настройка формы логина
+                .httpBasic(Customizer.withDefaults())
                 .formLogin(form -> form
-                        .loginProcessingUrl("/auth/login")  // URL для обработки логина
-                        .permitAll()
-                )
-
-                // Настройка выхода из системы
+                        .loginProcessingUrl("/auth/login")
+                        .permitAll())
                 .logout(logout -> logout
-                        .logoutUrl("/auth/logout")  // URL для выхода
-                        .permitAll()
-                );
-
+                        .logoutUrl("/auth/logout")
+                        .permitAll());
         return http.build();
     }
+
 
 
     @Bean

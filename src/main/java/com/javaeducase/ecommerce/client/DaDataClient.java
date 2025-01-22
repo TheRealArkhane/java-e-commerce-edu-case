@@ -20,7 +20,7 @@ public class DaDataClient {
 
     private final RestTemplate restTemplate;
 
-    public DaDataAddressDTO getCleanAddress(String address) {
+    public List<DaDataAddressDTO> getCleanAddressList(String address) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Token " + TOKEN);
         headers.set("X-Secret", SECRET);
@@ -37,7 +37,7 @@ public class DaDataClient {
         if (responseEntity.getBody() == null) {
             throw new RuntimeException("Empty response from DaData API");
         }
-        return responseEntity.getBody().get(0);
+        return responseEntity.getBody();
     }
 }
 

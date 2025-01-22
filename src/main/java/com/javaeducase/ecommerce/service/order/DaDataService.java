@@ -14,7 +14,7 @@ public class DaDataService {
 
     public String validateAddress(String address) {
         log.info("Validating address with DaData service...");
-        return daDataClient.getCleanAddress(address).toString();
+        return daDataClient.getCleanAddressList(address).get(0).toString();
         }
 }
 
