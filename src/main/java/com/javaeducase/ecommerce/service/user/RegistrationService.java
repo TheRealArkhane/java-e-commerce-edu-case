@@ -36,6 +36,6 @@ public class RegistrationService {
 
         User savedUser = userRepository.save(user);
         log.info("User with email: {} successfully registered", registrationDTO.getEmail());
-        return UserUtils.convertToDTO(savedUser);
+        return UserUtils.convertUserToUserDTO(savedUser);
     }
 }

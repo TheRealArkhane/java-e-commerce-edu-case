@@ -12,7 +12,7 @@ public class UserUtils {
 
     public static void validateEmail(String email) {
         if (email == null || !email.matches(EMAIL_REGEX)) {
-            throw new IllegalArgumentException("Wrond email format");
+            throw new IllegalArgumentException("Wrong email format");
         }
     }
 
@@ -31,7 +31,7 @@ public class UserUtils {
         }
     }
 
-    public static UserDTO convertToDTO(User user) {
+    public static UserDTO convertUserToUserDTO(User user) {
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
         dto.setFirstName(user.getFirstName());
