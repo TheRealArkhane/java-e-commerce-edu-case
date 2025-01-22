@@ -5,7 +5,6 @@ import com.javaeducase.ecommerce.dto.product.ProductDTO;
 import com.javaeducase.ecommerce.entity.product.Category;
 import com.javaeducase.ecommerce.exception.product.CategoryNotFoundException;
 import com.javaeducase.ecommerce.repository.product.CategoryRepository;
-import com.javaeducase.ecommerce.repository.product.ProductRepository;
 import com.javaeducase.ecommerce.util.product.CommonAllProductLinkedUtils;
 import com.javaeducase.ecommerce.util.product.ProductUtils;
 import lombok.RequiredArgsConstructor;

@@ -32,7 +32,7 @@ public class AdminCategoryController {
     public ResponseEntity<Map<String, String>> deleteCategory(@PathVariable Long id) {
         adminCategoryService.deleteCategory(id);
         Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("message", "Категория успешно удалена");
+        responseBody.put("message", "Category successfully deleted");
         return ResponseEntity.ok(responseBody);
     }
 }

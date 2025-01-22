@@ -21,7 +21,7 @@ public class AdminAttributeService {
         log.info("Creating attribute with name: {} and value: {}...", attributeDTO.getName(), attributeDTO.getValue());
         Attribute attribute = CommonAllProductLinkedUtils.convertAttributeDTOToAttribute(attributeDTO);
         Attribute savedAttribute = attributeRepository.save(attribute);
-        log.info("Àttribute with new name: {} and value: {} successfully created",
+        log.info("Attribute with new name: {} and value: {} successfully created",
                 attributeDTO.getName(), attributeDTO.getValue());
         return CommonAllProductLinkedUtils.convertAttributeToAttributeDTO(savedAttribute);
     }

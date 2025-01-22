@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -41,7 +40,7 @@ public class UserController {
         userService.deleteCurrentUser();
         SecurityContextHolder.getContext().setAuthentication(null);
         Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("message", "Пользователь успешно удален");
+        responseBody.put("message", "User successfully deleted");
         return new ResponseEntity<>(responseBody, HttpStatus.NO_CONTENT);
     }
 
@@ -49,7 +48,7 @@ public class UserController {
     public ResponseEntity<Map<String, String>> changePassword(@RequestBody ChangePasswordRequestDTO request) {
         userService.changePassword(request);
         Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("message", "Пароль успешно изменен");
+        responseBody.put("message", "Password successfully changed");
         return ResponseEntity.ok(responseBody);
     }
 }

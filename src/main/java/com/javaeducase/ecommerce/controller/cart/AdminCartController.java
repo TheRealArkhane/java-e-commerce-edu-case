@@ -35,7 +35,7 @@ public class AdminCartController {
     public ResponseEntity<Map<String, String>> deleteUserCart(@PathVariable Long id) {
         adminCartService.clearUserCart(id);
         Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("message", "Корзина пользователя с id: " + id + " очищена");
+        responseBody.put("message", "Cart of user with id: " + id + " is cleaned");
         return ResponseEntity.ok(responseBody);
     }
 }

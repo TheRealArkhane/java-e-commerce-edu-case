@@ -37,7 +37,7 @@ public class AdminOfferController {
     public ResponseEntity<Map<String, String>> deleteOffer(@PathVariable Long id) {
         adminOfferService.deleteOffer(id);
         Map <String, String> responseBody = new HashMap<>();
-        responseBody.put("message", "Предложение успешно удалено");
+        responseBody.put("message", "Offer successfully deleted");
         return ResponseEntity.ok(responseBody);
     }
 

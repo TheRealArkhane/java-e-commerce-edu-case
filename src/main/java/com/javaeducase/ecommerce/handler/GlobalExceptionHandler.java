@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<CustomErrorResponse> handleHttpRequestMethodNotSupportedExceptions(HttpRequestMethodNotSupportedException ex) {
-        String HttpRequestMethodNotSupportedExceptionMessage = "HTTP метод " + ex.getMethod() + " не поддерживается";
+        String HttpRequestMethodNotSupportedExceptionMessage = "HTTP method " + ex.getMethod() + " is not supported";
         CustomErrorResponse errorResponse = new CustomErrorResponse(HttpRequestMethodNotSupportedExceptionMessage, HttpStatus.CONFLICT.value());
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }

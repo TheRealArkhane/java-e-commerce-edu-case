@@ -5,8 +5,6 @@ import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.service.user.AdminUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -44,7 +42,7 @@ public class AdminUserController {
 
         adminUserService.deleteUser(id);
         Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("message", "Пользователь успешно удален");
+        responseBody.put("message", "User successfully deleted");
         return ResponseEntity.ok(responseBody);
     }
 
@@ -53,7 +51,7 @@ public class AdminUserController {
                                                                   @RequestBody ChangePasswordRequestDTO request) {
         adminUserService.changeUserPassword(id, request);
         Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("message", "Пароль успешно изменен");
+        responseBody.put("message", "Password successfully changed");
         return ResponseEntity.ok(responseBody);
     }
 }

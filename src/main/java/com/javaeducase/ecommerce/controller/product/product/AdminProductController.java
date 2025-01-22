@@ -34,7 +34,7 @@ public class AdminProductController {
     public ResponseEntity<Map<String, String>> deleteProduct(@PathVariable Long id) {
         adminProductService.deleteProduct(id);
         Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("message", "Товар успешно удален");
+        responseBody.put("message", "Product successfully deleted");
         return ResponseEntity.ok(responseBody);
     }
 }

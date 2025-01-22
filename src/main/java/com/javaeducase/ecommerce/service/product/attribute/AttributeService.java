@@ -4,7 +4,6 @@ import com.javaeducase.ecommerce.dto.product.AttributeDTO;
 import com.javaeducase.ecommerce.entity.product.Attribute;
 import com.javaeducase.ecommerce.exception.product.AttributeNotFoundException;
 import com.javaeducase.ecommerce.repository.product.AttributeRepository;
-import com.javaeducase.ecommerce.repository.product.OfferRepository;
 import com.javaeducase.ecommerce.util.product.CommonAllProductLinkedUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

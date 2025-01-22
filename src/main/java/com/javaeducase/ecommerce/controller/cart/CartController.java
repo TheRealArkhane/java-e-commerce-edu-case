@@ -35,7 +35,7 @@ public class CartController {
     public ResponseEntity<Map<String, String>> clearCurrentUserCart() {
         cartService.clearCart();
         Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("status", "Корзина очищена");
+        responseBody.put("status", "Cart is cleaned");
         return ResponseEntity.ok(responseBody);
     }
 }
