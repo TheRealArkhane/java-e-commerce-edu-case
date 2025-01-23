@@ -1,6 +1,7 @@
 package com.javaeducase.ecommerce.service.user;
 
 import com.javaeducase.ecommerce.dto.user.ChangePasswordRequestDTO;
+import com.javaeducase.ecommerce.dto.user.ChangeUserDataRequestDTO;
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.entity.user.User;
 import com.javaeducase.ecommerce.exception.user.InsufficientAdminPrivilegesException;
@@ -61,7 +62,7 @@ public class AdminUserService {
         log.info("Password change successful for user with id: {}", id);
     }
 
-    public UserDTO updateUser(Long id, UserDTO userDTO) {
+    public UserDTO updateUser(Long id, ChangeUserDataRequestDTO changeUserDataRequestDTO) {
         log.info("Updating user with id: {}...", id);
 
         User user = getUserByIdWithCheck(id);
@@ -72,13 +73,7 @@ public class AdminUserService {
             throw new InsufficientAdminPrivilegesException("Admin cannot change data of another admin");
         }
 
-        log.info("Validating email for user with id: {}...", id);
-        UserUtils.validateEmail(userDTO.getEmail());
-        UserUtils.checkEmailExists(userDTO.getEmail(), userRepository);
-        user.setEmail(userDTO.getEmail());
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-
+        UserUtils.updateUserFields(user, changeUserDataRequestDTO, userRepository);
         User updatedUser = userRepository.save(user);
         log.info("User with id: {} successfully updated", id);
         return UserUtils.convertUserToUserDTO(updatedUser);
