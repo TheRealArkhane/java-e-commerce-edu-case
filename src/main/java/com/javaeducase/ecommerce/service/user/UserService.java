@@ -92,7 +92,8 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() ->  new UserNotFoundException("User with email: " + email + " not found"));
         if (user.isDeleted()) {
-            throw new UserIsDeletedException("User is deleted");
+            log.error("User with email: {} is deleted", email);
+            throw new UserIsDeletedException("User is already deleted");
         }
         return user;
     }
