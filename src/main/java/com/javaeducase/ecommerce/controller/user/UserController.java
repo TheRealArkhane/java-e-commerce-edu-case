@@ -3,13 +3,13 @@ package com.javaeducase.ecommerce.controller.user;
 import com.javaeducase.ecommerce.dto.user.ChangePasswordRequestDTO;
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.handler.CustomErrorResponse;
-import com.javaeducase.ecommerce.handler.GlobalExceptionHandler;
 import com.javaeducase.ecommerce.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+@Tag(name = "Basic User (Customer)",
+        description = "Methods for interacting only with the logged-in user's profile")
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
