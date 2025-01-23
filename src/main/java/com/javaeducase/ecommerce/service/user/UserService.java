@@ -74,7 +74,7 @@ public class UserService implements UserDetailsService {
         log.info("Fetching user by email: {}...", email);
         User user = getUserWithEmailAndIsDeletedCheck(email);
         log.info("User with email: {} successfully found", email);
-        return UserUtils.convertToDTO(user);
+        return UserUtils.convertUserToUserDTO(user);
     }
 
     public UserDTO updateCurrentUser(UserDTO userDTO) {
@@ -93,7 +93,7 @@ public class UserService implements UserDetailsService {
         currentUser.setLastName(userDTO.getLastName());
         User updatedUser = userRepository.save(currentUser);
         log.info("User with email: {} successfully updated", currentUser.getEmail());
-        return UserUtils.convertToDTO(updatedUser);
+        return UserUtils.convertUserToUserDTO(updatedUser);
     }
 
     public void deleteCurrentUser() {

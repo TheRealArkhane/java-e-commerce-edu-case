@@ -76,7 +76,7 @@ public class OrderService {
         Order order = new Order();
         order.setUser(currentUser);
 
-        if (Objects.equals(delivery.getName(), "Самовывоз")) {
+        if (Objects.equals(delivery.getId(), 2L)) {
             PickupLocation pickupLocation = pickupLocationRepository.findByAddress(daDataAddress).orElse(null);
             if (pickupLocation == null) {
                 throw new IllegalArgumentException("There is no such pickup location");

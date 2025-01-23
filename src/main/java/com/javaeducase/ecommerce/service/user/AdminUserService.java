@@ -27,7 +27,7 @@ public class AdminUserService {
     public List<UserDTO> getAllUsers() {
         log.info("Fetching all users...");
         List<UserDTO> users = userRepository.findAll().stream()
-                .map(UserUtils::convertToDTO)
+                .map(UserUtils::convertUserToUserDTO)
                 .collect(Collectors.toList());
         log.info("Successfully fetched {} users", users.size());
         return users;
@@ -37,7 +37,7 @@ public class AdminUserService {
         log.info("Fetching user with id: {}...", id);
         User user = getUserByIdWithCheck(id);
         log.info("User with id: {} found", id);
-        return UserUtils.convertToDTO(user);
+        return UserUtils.convertUserToUserDTO(user);
     }
 
     public void changeUserPassword(Long id, ChangePasswordRequestDTO request) {
@@ -81,7 +81,7 @@ public class AdminUserService {
 
         User updatedUser = userRepository.save(user);
         log.info("User with id: {} successfully updated", id);
-        return UserUtils.convertToDTO(updatedUser);
+        return UserUtils.convertUserToUserDTO(updatedUser);
     }
 
     public void deleteUser(Long id) {

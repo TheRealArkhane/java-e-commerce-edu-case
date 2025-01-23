@@ -21,9 +21,9 @@ public class Cart {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(
-            name = "cart_items_list", // Новое имя таблицы
-            joinColumns = @JoinColumn(name = "cart_id"), // Внешний ключ на Cart
-            inverseJoinColumns = @JoinColumn(name = "cart_item_id")) // Внешний ключ на CartItem
+            name = "cart_items_list",
+            joinColumns = @JoinColumn(name = "cart_id"),
+            inverseJoinColumns = @JoinColumn(name = "cart_item_id"))
     private List<CartItem> items = new ArrayList<>(); ;
 
     @Column(name = "total_amount")

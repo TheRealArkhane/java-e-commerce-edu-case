@@ -22,9 +22,7 @@ public class RegistrationService {
     public UserDTO registerUser(RegistrationDTO registrationDTO) {
         log.info("Starting registration for user with email: {}...", registrationDTO.getEmail());
         UserUtils.validateEmail(registrationDTO.getEmail());
-        if (userRepository.findByEmail(registrationDTO.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("User with this email already exists");
-        }
+        UserUtils.checkEmailExists(registrationDTO.getEmail(), userRepository);
 
         User user = new User();
         user.setFirstName(registrationDTO.getFirstName());
@@ -36,6 +34,6 @@ public class RegistrationService {
 
         User savedUser = userRepository.save(user);
         log.info("User with email: {} successfully registered", registrationDTO.getEmail());
-        return UserUtils.convertToDTO(savedUser);
+        return UserUtils.convertUserToUserDTO(savedUser);
     }
 }

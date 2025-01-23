@@ -2,7 +2,10 @@ package com.javaeducase.ecommerce.entity.user;
 
 import com.javaeducase.ecommerce.entity.cart.Cart;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter
