@@ -23,7 +23,7 @@ public class OpenAPIConfiguration {
 
         Contact myContact = new Contact();
         myContact.setName("Fedyanin Victor");
-        myContact.setEmail("fedyanin.v.v@yandex.com");
+        myContact.setEmail("fedyanin.v.v@yandex.ru");
 
         Components authorization = new Components()
                 .addSecuritySchemes("basicAuth", new SecurityScheme()
@@ -34,16 +34,17 @@ public class OpenAPIConfiguration {
         Info information = new Info()
                 .title("E-commerce Marketplace System API")
                 .version("1.0")
-                .description("    This API provides endpoints " +
-                        "for managing and utilizing a comprehensive e-commerce marketplace platform.\n" +
-                        "    It facilitates integration for the following functionalities:\n" +
-                        "    - User registration, authentication, and role management\n" +
-                        "    - Product catalog management, including categories, products, offers and attributes\n" +
-                        "    - Shopping cart operations, including adding, removing, and viewing items\n" +
-                        "    - Order placement, tracking, and management\n" +
-                        "    - Delivery and Payment processing\n" +
-                        "    - Administrative features, such as user, catalog, users cart and order management\n" +
-                        "    - Support for data validation (DaData integration) and error handling across endpoints.")
+                .description("""
+                            This API provides endpoints \
+                        for managing and utilizing a comprehensive e-commerce marketplace platform.
+                            It facilitates integration for the following functionalities:
+                            - User registration, authentication, and role management
+                            - Product catalog management, including categories, products, offers and attributes
+                            - Shopping cart operations, including adding, removing, and viewing items
+                            - Order placement, tracking, and management
+                            - Delivery and Payment processing
+                            - Administrative features, such as user, catalog, users cart and order management
+                            - Support for data validation (DaData integration) and error handling across endpoints.""")
                 .contact(myContact);
         return new OpenAPI()
                 .info(information)

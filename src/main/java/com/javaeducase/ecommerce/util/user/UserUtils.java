@@ -18,7 +18,7 @@ public class UserUtils {
 
     public static void checkEmailExists(String email, UserRepository userRepository) {
         if (userRepository.findByEmail(email).isPresent()) {
-            throw new IllegalArgumentException("User with email: " + email + " not found");
+            throw new IllegalArgumentException("User with email: " + email + " is already exists");
         }
     }
 
