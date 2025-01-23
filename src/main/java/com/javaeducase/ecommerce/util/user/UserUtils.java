@@ -1,5 +1,6 @@
 package com.javaeducase.ecommerce.util.user;
 
+import com.javaeducase.ecommerce.dto.user.ChangeUserDataRequestDTO;
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.entity.user.User;
 import com.javaeducase.ecommerce.exception.user.IdenticalPasswordException;
@@ -40,5 +41,28 @@ public class UserUtils {
         dto.setRole(user.getRole());
         dto.setDeleted(user.isDeleted());
         return dto;
+    }
+
+    public static void updateUserFields(
+            User user,
+            ChangeUserDataRequestDTO changeUserDataRequestDTO,
+            UserRepository userRepository) {
+
+        if (changeUserDataRequestDTO.getEmail() != null
+                && !changeUserDataRequestDTO.getEmail().equals(user.getEmail())) {
+            validateEmail(changeUserDataRequestDTO.getEmail());
+            checkEmailExists(changeUserDataRequestDTO.getEmail(), userRepository);
+            user.setEmail(changeUserDataRequestDTO.getEmail());
+        }
+
+        if (changeUserDataRequestDTO.getFirstName() != null
+                && !changeUserDataRequestDTO.getFirstName().equals(user.getFirstName())) {
+            user.setFirstName(changeUserDataRequestDTO.getFirstName());
+        }
+
+        if (changeUserDataRequestDTO.getLastName() != null
+                && !changeUserDataRequestDTO.getLastName().equals(user.getLastName())) {
+            user.setLastName(changeUserDataRequestDTO.getLastName());
+        }
     }
 }

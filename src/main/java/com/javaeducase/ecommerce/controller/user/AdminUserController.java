@@ -1,6 +1,7 @@
 package com.javaeducase.ecommerce.controller.user;
 
 import com.javaeducase.ecommerce.dto.user.ChangePasswordRequestDTO;
+import com.javaeducase.ecommerce.dto.user.ChangeUserDataRequestDTO;
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.handler.CustomErrorResponse;
 import com.javaeducase.ecommerce.service.user.AdminUserService;
@@ -86,8 +87,8 @@ public class AdminUserController {
     @PutMapping("/{id}")
     public ResponseEntity<UserDTO> updateUser(
             @PathVariable Long id,
-            @RequestBody UserDTO userDTO) {
-        UserDTO updatedUser = adminUserService.updateUser(id, userDTO);
+            @RequestBody ChangeUserDataRequestDTO changeUserDataRequestDTO) {
+        UserDTO updatedUser = adminUserService.updateUser(id, changeUserDataRequestDTO);
         return ResponseEntity.ok(updatedUser);
     }
 

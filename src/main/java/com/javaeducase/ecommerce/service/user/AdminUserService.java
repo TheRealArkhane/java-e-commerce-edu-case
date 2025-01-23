@@ -1,6 +1,7 @@
 package com.javaeducase.ecommerce.service.user;
 
 import com.javaeducase.ecommerce.dto.user.ChangePasswordRequestDTO;
+import com.javaeducase.ecommerce.dto.user.ChangeUserDataRequestDTO;
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.entity.user.User;
 import com.javaeducase.ecommerce.exception.user.InsufficientAdminPrivilegesException;
@@ -35,18 +36,14 @@ public class AdminUserService {
 
     public UserDTO getUserById(Long id) {
         log.info("Fetching user with id: {}...", id);
-        User user = getUserByIdWithCheck(id);
+        User user = getUserByIdAndIsDeletedCheck(id);
         log.info("User with id: {} found", id);
         return UserUtils.convertUserToUserDTO(user);
     }
 
     public void changeUserPassword(Long id, ChangePasswordRequestDTO request) {
         log.info("Changing password for user with id: {}...", id);
-        User user = getUserByIdWithCheck(id);
-        if (user.isDeleted()) {
-            log.error("User with id: {} is deleted", id);
-            throw new UserIsDeletedException("User is deleted");
-        }
+        User user = getUserByIdAndIsDeletedCheck(id);
         if (user.getRole().name().equals("ADMIN")) {
             throw new InsufficientAdminPrivilegesException("Admin cannot change data of another admin");
         }
@@ -61,24 +58,15 @@ public class AdminUserService {
         log.info("Password change successful for user with id: {}", id);
     }
 
-    public UserDTO updateUser(Long id, UserDTO userDTO) {
+    public UserDTO updateUser(Long id, ChangeUserDataRequestDTO changeUserDataRequestDTO) {
         log.info("Updating user with id: {}...", id);
 
-        User user = getUserByIdWithCheck(id);
-        if (user.isDeleted()) {
-            throw new UserIsDeletedException("User is deleted");
-        }
+        User user = getUserByIdAndIsDeletedCheck(id);
         if (user.getRole().name().equals("ADMIN")) {
             throw new InsufficientAdminPrivilegesException("Admin cannot change data of another admin");
         }
 
-        log.info("Validating email for user with id: {}...", id);
-        UserUtils.validateEmail(userDTO.getEmail());
-        UserUtils.checkEmailExists(userDTO.getEmail(), userRepository);
-        user.setEmail(userDTO.getEmail());
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-
+        UserUtils.updateUserFields(user, changeUserDataRequestDTO, userRepository);
         User updatedUser = userRepository.save(user);
         log.info("User with id: {} successfully updated", id);
         return UserUtils.convertUserToUserDTO(updatedUser);
@@ -87,21 +75,22 @@ public class AdminUserService {
     public void deleteUser(Long id) {
         log.info("Deleting user with id: {}...", id);
 
-        User user = getUserByIdWithCheck(id);
-        if (user.isDeleted()) {
-            throw new UserIsDeletedException("User is deleted");
-        }
+        User user = getUserByIdAndIsDeletedCheck(id);
         if (user.getRole().name().equals("ADMIN")) {
             throw new InsufficientAdminPrivilegesException("Admin cannot delete another admin");
         }
-
         user.setDeleted(true);
         userRepository.save(user);
         log.info("User with id: {} successfully deleted", id);
     }
 
-    private User getUserByIdWithCheck(Long id) {
-        return userRepository.findById(id)
+    private User getUserByIdAndIsDeletedCheck(Long id) {
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User with id: " + id + " not found"));
+        if (user.isDeleted()) {
+            log.error("User with id: {} is deleted", id);
+            throw new UserIsDeletedException("User is already deleted");
+        }
+        return user;
     }
 }

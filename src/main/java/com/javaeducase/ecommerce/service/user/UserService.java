@@ -1,6 +1,7 @@
 package com.javaeducase.ecommerce.service.user;
 
 import com.javaeducase.ecommerce.dto.user.ChangePasswordRequestDTO;
+import com.javaeducase.ecommerce.dto.user.ChangeUserDataRequestDTO;
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.entity.user.User;
 import com.javaeducase.ecommerce.exception.user.UserIsDeletedException;
@@ -70,45 +71,29 @@ public class UserService implements UserDetailsService {
         log.info("Password for user with email: {} successfully changed", currentUser.getEmail());
     }
 
-    public UserDTO getUserByEmail(String email) {
-        log.info("Fetching user by email: {}...", email);
-        User user = getUserWithEmailAndIsDeletedCheck(email);
-        log.info("User with email: {} successfully found", email);
-        return UserUtils.convertUserToUserDTO(user);
-    }
-
-    public UserDTO updateCurrentUser(UserDTO userDTO) {
+    public UserDTO updateCurrentUser(ChangeUserDataRequestDTO changeUserDataRequestDTO) {
         log.info("Updating data of current user...");
         User currentUser = getCurrentUser();
-        if (!currentUser.getEmail().equals(userDTO.getEmail())) {
-            log.info("Validating new email for user with email: {}...", currentUser.getEmail());
-            UserUtils.validateEmail(userDTO.getEmail());
-            UserUtils.checkEmailExists(userDTO.getEmail(), userRepository);
-            log.info("Email validated");
-            currentUser.setEmail(userDTO.getEmail());
-            log.info("New email: {} is successfully changed", userDTO.getEmail());
-        }
-
-        currentUser.setFirstName(userDTO.getFirstName());
-        currentUser.setLastName(userDTO.getLastName());
+        UserUtils.updateUserFields(currentUser, changeUserDataRequestDTO, userRepository);
         User updatedUser = userRepository.save(currentUser);
-        log.info("User with email: {} successfully updated", currentUser.getEmail());
+        log.info("User with id: {} successfully updated", currentUser.getId());
         return UserUtils.convertUserToUserDTO(updatedUser);
     }
 
     public void deleteCurrentUser() {
         User currentUser = getCurrentUser();
-        log.info("Deleting user with email: {}...", currentUser.getEmail());
+        log.info("Deleting user with id: {}...", currentUser.getId());
         currentUser.setDeleted(true);
         userRepository.save(currentUser);
-        log.info("User with email: {} successfully deleted", currentUser.getEmail());
+        log.info("User with id: {} successfully deleted", currentUser.getId());
     }
 
     private User getUserWithEmailAndIsDeletedCheck(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() ->  new UserNotFoundException("User with email: " + email + " not found"));
         if (user.isDeleted()) {
-            throw new UserIsDeletedException("User is deleted");
+            log.error("User with email: {} is deleted", email);
+            throw new UserIsDeletedException("User is already deleted");
         }
         return user;
     }

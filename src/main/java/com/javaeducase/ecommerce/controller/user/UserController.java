@@ -1,9 +1,11 @@
 package com.javaeducase.ecommerce.controller.user;
 
 import com.javaeducase.ecommerce.dto.user.ChangePasswordRequestDTO;
+import com.javaeducase.ecommerce.dto.user.ChangeUserDataRequestDTO;
 import com.javaeducase.ecommerce.dto.user.UserDTO;
 import com.javaeducase.ecommerce.handler.CustomErrorResponse;
 import com.javaeducase.ecommerce.service.user.UserService;
+import com.javaeducase.ecommerce.util.user.UserUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,7 +15,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +29,7 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
-    
+
 
     @Operation (summary = "Get logged-in user",
             description = "Get user that currently logged-in")
@@ -50,9 +51,7 @@ public class UserController {
     })
     @GetMapping("/me")
     public ResponseEntity<UserDTO> getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authentication.getName();
-        UserDTO userDTO = userService.getUserByEmail(currentUserEmail);
+        UserDTO userDTO = UserUtils.convertUserToUserDTO(userService.getCurrentUser());
         return ResponseEntity.ok(userDTO);
     }
 
@@ -76,8 +75,8 @@ public class UserController {
                             schema = @Schema(implementation = CustomErrorResponse.class))})
     })
     @PutMapping("/me")
-    public ResponseEntity<UserDTO> updateCurrentUser(@RequestBody UserDTO userDTO) {
-        UserDTO updatedUser = userService.updateCurrentUser(userDTO);
+    public ResponseEntity<UserDTO> updateCurrentUser(@RequestBody ChangeUserDataRequestDTO changeUserDataRequestDTO) {
+        UserDTO updatedUser = userService.updateCurrentUser(changeUserDataRequestDTO);
         return ResponseEntity.ok(updatedUser);
     }
 
