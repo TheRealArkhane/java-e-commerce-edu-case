@@ -33,13 +33,12 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         log.info("Loading user with email: {}...", email);
         User user = getUserWithEmailAndIsDeletedCheck(email);
-        log.info("User with email: {} successfully logged in", email);
-
-        return new org.springframework.security.core.userdetails.User(
+        UserDetails loggedInUser = new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
-                List.of(new SimpleGrantedAuthority(user.getRole().name()))
-        );
+                List.of(new SimpleGrantedAuthority(user.getRole().name())));
+        log.info("User with email: {} successfully loaded", email);
+        return loggedInUser;
     }
 
     public User getCurrentUser() {
@@ -47,12 +46,13 @@ public class UserService implements UserDetailsService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof UserDetails)) {
             log.error("Current user not found in security context");
-            throw new UserNotFoundException("Current user not found");
+            throw new UserNotFoundException("Current user not found in security context");
         }
 
         String email = ((UserDetails) authentication.getPrincipal()).getUsername();
         log.info("Searching for user with email: {}...", email);
-        return getUserWithEmailAndIsDeletedCheck(email);
+        return userRepository.findByEmail(email)
+                .orElseThrow(() ->  new UserNotFoundException("User with email: " + email + " is not found"));
     }
 
     public void changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) {
@@ -88,12 +88,12 @@ public class UserService implements UserDetailsService {
         log.info("User with id: {} successfully deleted", currentUser.getId());
     }
 
-    private User getUserWithEmailAndIsDeletedCheck(String email) {
+    User getUserWithEmailAndIsDeletedCheck(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() ->  new UserNotFoundException("User with email: " + email + " not found"));
+                .orElseThrow(() ->  new UserNotFoundException("User with email: " + email + " is not found"));
         if (user.isDeleted()) {
             log.error("User with email: {} is deleted", email);
-            throw new UserIsDeletedException("User is already deleted");
+            throw new UserIsDeletedException("User with email: " + email + " is deleted");
         }
         return user;
     }
