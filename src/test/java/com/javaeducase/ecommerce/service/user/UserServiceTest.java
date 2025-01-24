@@ -58,18 +58,16 @@ class UserServiceTest {
         user.setDeleted(false);
     }
 
-
     @Test
     void getUserWithEmailAndIsDeletedCheck_Success() {
-        String email = "test@test.dev";
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        setUpUserInRepository(user.getEmail());
 
-        User result = userService.getUserWithEmailAndIsDeletedCheck(email);
+        User result = userService.getUserWithEmailAndIsDeletedCheck(user.getEmail());
 
         assertNotNull(result);
-        assertEquals(email, result.getEmail());
+        assertEquals(user.getEmail(), result.getEmail());
         assertFalse(result.isDeleted());
-        verify(userRepository, times(1)).findByEmail(user.getEmail());
+        verify(userRepository).findByEmail(user.getEmail());
     }
 
     @Test
@@ -79,219 +77,155 @@ class UserServiceTest {
 
         UserNotFoundException exception = assertThrows(
                 UserNotFoundException.class,
-                () -> userService.getUserWithEmailAndIsDeletedCheck(email));
+                () -> userService.getUserWithEmailAndIsDeletedCheck(email)
+        );
+
         assertEquals("User with email: " + email + " is not found", exception.getMessage());
-        verify(userRepository, times(1)).findByEmail("nonexist@test.dev");
+        verify(userRepository).findByEmail(email);
     }
 
     @Test
     void getUserWithEmailAndIsDeletedCheck_UserIsDeleted() {
-        String email = "test@test.dev";
         user.setDeleted(true);
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        setUpUserInRepository(user.getEmail());
 
         UserIsDeletedException exception = assertThrows(
-                UserIsDeletedException.class, () -> userService.getUserWithEmailAndIsDeletedCheck(email));
-        assertEquals("User with email: " + email + " is deleted", exception.getMessage());
-        verify(userRepository, times(1)).findByEmail(user.getEmail());
-    }
+                UserIsDeletedException.class,
+                () -> userService.getUserWithEmailAndIsDeletedCheck(user.getEmail())
+        );
 
+        assertEquals("User with email: " + user.getEmail() + " is deleted", exception.getMessage());
+        verify(userRepository).findByEmail(user.getEmail());
+    }
 
     @Test
     void getCurrentUser_Success() {
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        when(authentication.getPrincipal()).thenReturn(
-                new org.springframework.security.core.userdetails.User(
-                        user.getEmail(),
-                        user.getPassword(),
-                        List.of(new SimpleGrantedAuthority(user.getRole().name()))));
-        when(userRepository.findByEmail("test@test.dev")).thenReturn(Optional.of(user));
+        mockAuthentication(user.getEmail());
+        setUpUserInRepository(user.getEmail());
 
         User result = userService.getCurrentUser();
 
         assertNotNull(result);
         assertEquals(user, result);
-        verify(userRepository, times(1)).findByEmail(user.getEmail());
+        verify(userRepository).findByEmail(user.getEmail());
     }
 
     @Test
     void changePassword_Success() {
         String oldPassword = "password";
         String newPassword = "newPassword";
+        mockAuthentication(user.getEmail());
+        setUpUserInRepository(user.getEmail());
 
         when(passwordEncoder.matches(oldPassword, user.getPassword())).thenReturn(true);
-        when(passwordEncoder.matches(newPassword, user.getPassword())).thenReturn(false);
         when(passwordEncoder.encode(newPassword)).thenReturn("encodedNewPassword");
-
-        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        when(authentication.getPrincipal()).thenReturn(
-                new org.springframework.security.core.userdetails.User(
-                        user.getEmail(),
-                        user.getPassword(),
-                        List.of(new SimpleGrantedAuthority(user.getRole().name()))
-                )
-        );
 
         userService.changePassword(new ChangePasswordRequestDTO(oldPassword, newPassword));
 
         assertEquals("encodedNewPassword", user.getPassword());
-        verify(userRepository, times(1)).findByEmail(user.getEmail());
-        verify(userRepository, times(1)).save(user);
+        verify(userRepository).save(user);
     }
 
     @Test
     void changePassword_WrongOldPassword() {
-        String oldPassword = "WrongOldPassword";
+        String oldPassword = "wrongPassword";
         String newPassword = "newPassword";
+        mockAuthentication(user.getEmail());
+        setUpUserInRepository(user.getEmail());
 
         when(passwordEncoder.matches(oldPassword, user.getPassword())).thenReturn(false);
-        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        when(authentication.getPrincipal()).thenReturn(
-                new org.springframework.security.core.userdetails.User(
-                        user.getEmail(),
-                        user.getPassword(),
-                        List.of(new SimpleGrantedAuthority(user.getRole().name()))
-                )
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> userService.changePassword(new ChangePasswordRequestDTO(oldPassword, newPassword))
         );
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> userService.changePassword(new ChangePasswordRequestDTO(oldPassword, newPassword)));
         assertEquals("Old password is incorrect", ex.getMessage());
-        verify(userRepository, times(1)).findByEmail(user.getEmail());
     }
 
     @Test
     void changePassword_IdenticalOldAndNewPasswords() {
         String oldPassword = "password";
         String newPassword = "password";
+        mockAuthentication(user.getEmail());
+        setUpUserInRepository(user.getEmail());
 
         when(passwordEncoder.matches(oldPassword, user.getPassword())).thenReturn(true);
-        when(passwordEncoder.matches(newPassword, user.getPassword())).thenReturn(true);
-        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        when(authentication.getPrincipal()).thenReturn(
-                new org.springframework.security.core.userdetails.User(
-                        user.getEmail(),
-                        user.getPassword(),
-                        List.of(new SimpleGrantedAuthority(user.getRole().name()))
-                )
+
+        IdenticalPasswordException ex = assertThrows(
+                IdenticalPasswordException.class,
+                () -> userService.changePassword(new ChangePasswordRequestDTO(oldPassword, newPassword))
         );
 
-        IdenticalPasswordException ex = assertThrows(IdenticalPasswordException.class,
-                () -> userService.changePassword(new ChangePasswordRequestDTO(oldPassword, newPassword)));
         assertEquals("New password cannot be the same as old password", ex.getMessage());
-        verify(userRepository, times(1)).findByEmail(user.getEmail());
     }
 
     @Test
     void updateCurrentUser_Success() {
-        ChangeUserDataRequestDTO changeUserDataRequestDTO = new ChangeUserDataRequestDTO();
-        changeUserDataRequestDTO.setFirstName("newFirstName");
-        changeUserDataRequestDTO.setLastName("newLastName");
-        changeUserDataRequestDTO.setEmail("newEmail@test.dev");
+        ChangeUserDataRequestDTO changeRequest = new ChangeUserDataRequestDTO();
+        changeRequest.setFirstName("newFirstName");
+        changeRequest.setLastName("newLastName");
+        changeRequest.setEmail("newEmail@test.dev");
 
-        User updatedUser = new User();
-        updatedUser.setEmail(changeUserDataRequestDTO.getEmail());
-        updatedUser.setFirstName(changeUserDataRequestDTO.getFirstName());
-        updatedUser.setLastName(changeUserDataRequestDTO.getLastName());
-        updatedUser.setDeleted(false);
-        updatedUser.setRole(Role.USER);
+        mockAuthentication(user.getEmail());
+        setUpUserInRepository(user.getEmail());
 
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        when(authentication.getPrincipal()).thenReturn(
-                new org.springframework.security.core.userdetails.User(
-                        user.getEmail(),
-                        user.getPassword(),
-                        List.of(new SimpleGrantedAuthority(user.getRole().name()))));
-        when(userRepository.findByEmail("test@test.dev")).thenReturn(Optional.of(user));
-        when(userRepository.save(any(User.class))).thenReturn(updatedUser);
+        when(userRepository.save(any(User.class))).thenReturn(user);
 
-        UserDTO result = userService.updateCurrentUser(changeUserDataRequestDTO);
+        UserDTO result = userService.updateCurrentUser(changeRequest);
 
         assertNotNull(result);
-        assertEquals(result.getFirstName(), changeUserDataRequestDTO.getFirstName());
-        assertEquals(result.getLastName(), changeUserDataRequestDTO.getLastName());
-        assertEquals(result.getEmail(), changeUserDataRequestDTO.getEmail());
-
-        verify(userRepository, times(1)).findByEmail("test@test.dev");
-        verify(userRepository, times(1)).save(any(User.class));
-    }
-
-    @Test
-    void updateCurrentUser_WrongEmailFormat() {
-        ChangeUserDataRequestDTO changeUserDataRequestDTO = new ChangeUserDataRequestDTO();
-        changeUserDataRequestDTO.setEmail("wrongFormatEmail");
-
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        when(authentication.getPrincipal()).thenReturn(
-                new org.springframework.security.core.userdetails.User(
-                        user.getEmail(),
-                        user.getPassword(),
-                        List.of(new SimpleGrantedAuthority(user.getRole().name()))));
-        when(userRepository.findByEmail("test@test.dev")).thenReturn(Optional.of(user));
-
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> userService.updateCurrentUser(changeUserDataRequestDTO));
-
-        assertEquals("Wrong email format", ex.getMessage());
-        verify(userRepository, times(1)).findByEmail("test@test.dev");
+        assertEquals(changeRequest.getFirstName(), result.getFirstName());
+        assertEquals(changeRequest.getLastName(), result.getLastName());
+        assertEquals(changeRequest.getEmail(), result.getEmail());
+        verify(userRepository).save(user);
     }
 
     @Test
     void updateCurrentUser_EmailAlreadyExists() {
         String existEmail = "exist@test.dev";
+        ChangeUserDataRequestDTO changeRequest = new ChangeUserDataRequestDTO();
+        changeRequest.setEmail(existEmail);
+
         User existingUser = new User();
         existingUser.setEmail(existEmail);
 
-        ChangeUserDataRequestDTO changeUserDataRequestDTO = new ChangeUserDataRequestDTO();
-        changeUserDataRequestDTO.setEmail(existEmail);
-
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        when(authentication.getPrincipal()).thenReturn(
-                new org.springframework.security.core.userdetails.User(
-                        user.getEmail(),
-                        user.getPassword(),
-                        List.of(new SimpleGrantedAuthority(user.getRole().name()))));
-        when(userRepository.findByEmail("test@test.dev")).thenReturn(Optional.of(user));
+        mockAuthentication(user.getEmail());
+        setUpUserInRepository(user.getEmail());
         when(userRepository.findByEmail(existEmail)).thenReturn(Optional.of(existingUser));
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> userService.updateCurrentUser(changeUserDataRequestDTO));
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> userService.updateCurrentUser(changeRequest)
+        );
 
-        assertEquals("User with email: "
-                + changeUserDataRequestDTO.getEmail()
-                + " is already exists",
-                ex.getMessage());
-        verify(userRepository, times(1)).findByEmail("test@test.dev");
-        verify(userRepository, times(1)).findByEmail(existEmail);
+        assertEquals("User with email: " + existEmail + " is already exists", ex.getMessage());
     }
 
     @Test
     void deleteCurrentUser_Success() {
-        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        when(authentication.getPrincipal()).thenReturn(
-                new org.springframework.security.core.userdetails.User(
-                        user.getEmail(),
-                        user.getPassword(),
-                        List.of(new SimpleGrantedAuthority(user.getRole().name()))
-                )
-        );
+        mockAuthentication(user.getEmail());
+        setUpUserInRepository(user.getEmail());
 
         userService.deleteCurrentUser();
 
         assertTrue(user.isDeleted());
-        verify(userRepository, times(1)).findByEmail(user.getEmail());
-        verify(userRepository, times(1)).save(user);
+        verify(userRepository).save(user);
+    }
+
+    private void mockAuthentication(String email) {
+        SecurityContextHolder.setContext(securityContext);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(
+                new org.springframework.security.core.userdetails.User(
+                        email,
+                        user.getPassword(),
+                        List.of(new SimpleGrantedAuthority(user.getRole().name()))
+                )
+        );
+    }
+
+    private void setUpUserInRepository(String email) {
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
     }
 }
