@@ -36,14 +36,16 @@ public class AdminUserService {
 
     public UserDTO getUserById(Long id) {
         log.info("Fetching user with id: {}...", id);
-        User user = getUserByIdAndIsDeletedCheck(id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User with id: " + id + " not found"));
         log.info("User with id: {} found", id);
         return UserUtils.convertUserToUserDTO(user);
     }
 
     public void changeUserPassword(Long id, ChangePasswordRequestDTO request) {
         log.info("Changing password for user with id: {}...", id);
-        User user = getUserByIdAndIsDeletedCheck(id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User with id: " + id + " not found"));
         if (user.getRole().name().equals("ADMIN")) {
             throw new InsufficientAdminPrivilegesException("Admin cannot change data of another admin");
         }
@@ -60,8 +62,8 @@ public class AdminUserService {
 
     public UserDTO updateUser(Long id, ChangeUserDataRequestDTO changeUserDataRequestDTO) {
         log.info("Updating user with id: {}...", id);
-
-        User user = getUserByIdAndIsDeletedCheck(id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User with id: " + id + " not found"));
         if (user.getRole().name().equals("ADMIN")) {
             throw new InsufficientAdminPrivilegesException("Admin cannot change data of another admin");
         }
@@ -82,6 +84,22 @@ public class AdminUserService {
         user.setDeleted(true);
         userRepository.save(user);
         log.info("User with id: {} successfully deleted", id);
+    }
+
+    public UserDTO undeleteUser(Long id) {
+        log.info("Restoring user with id:  {}...", id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User with id: " + id + " not found"));
+        if (!user.isDeleted()) {
+            throw new IllegalArgumentException("User is not deleted");
+        }
+        if (user.getRole().name().equals("ADMIN")) {
+            throw new InsufficientAdminPrivilegesException("Admin cannot restore another admin");
+        }
+        user.setDeleted(false);
+        userRepository.save(user);
+        log.info("User with id: {} successfully restored", id);
+        return UserUtils.convertUserToUserDTO(user);
     }
 
     private User getUserByIdAndIsDeletedCheck(Long id) {

@@ -94,7 +94,7 @@ public class AdminUserController {
 
 
     @Operation(summary = "Delete user by ID",
-            description = "Mark a user as deleted by their ID.")
+            description = "Mark user as deleted by their ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "User successfully marked as deleted",
@@ -118,6 +118,31 @@ public class AdminUserController {
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", "User successfully deleted");
         return ResponseEntity.ok(responseBody);
+    }
+
+    @Operation(summary = "Restore deleted user by ID",
+            description = "Remove isDeleted mark from user (not ADMIN) by ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "User successfully restored",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = UserDTO.class))}),
+            @ApiResponse(responseCode = "404",
+                    description = "User not found",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CustomErrorResponse.class))}),
+            @ApiResponse(responseCode = "403",
+                    description = "Admin cannot restore another admin or user is not deleted",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CustomErrorResponse.class))})
+    })
+    @PutMapping("/restore/{id}")
+    public ResponseEntity<UserDTO> undeleteUser(@PathVariable Long id) {
+        UserDTO restoredUser = adminUserService.undeleteUser(id);
+        return ResponseEntity.ok(restoredUser);
     }
 
 
