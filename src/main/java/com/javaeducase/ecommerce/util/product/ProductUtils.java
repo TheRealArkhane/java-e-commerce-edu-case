@@ -5,6 +5,7 @@ import com.javaeducase.ecommerce.entity.product.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,10 +19,13 @@ public class ProductUtils {
         productDTO.setIsDeleted(product.getIsDeleted());
         CategoryDTO categoryDTO = CommonAllProductLinkedUtils.convertCategoryToCategoryDTO(product.getCategory());
         productDTO.setCategory(categoryDTO);
-        List<OfferDTO> offerDTOs = product.getOffers().stream()
-                .map(CommonAllProductLinkedUtils::convertOfferToOfferDTO)
-                .collect(Collectors.toList());
-        productDTO.setOffers(offerDTOs);
+        if (!product.getOffers().isEmpty()) {
+            List<OfferDTO> offerDTOs = product.getOffers().stream()
+                    .map(CommonAllProductLinkedUtils::convertOfferToOfferDTO)
+                    .collect(Collectors.toList());
+            productDTO.setOffers(offerDTOs);
+        }
+        else productDTO.setOffers(new ArrayList<>());
         return productDTO;
     }
 }

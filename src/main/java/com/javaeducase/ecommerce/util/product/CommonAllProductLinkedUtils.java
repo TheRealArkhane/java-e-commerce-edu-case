@@ -6,8 +6,8 @@ import com.javaeducase.ecommerce.dto.product.OfferDTO;
 import com.javaeducase.ecommerce.entity.product.Attribute;
 import com.javaeducase.ecommerce.entity.product.Category;
 import com.javaeducase.ecommerce.entity.product.Offer;
-import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class CommonAllProductLinkedUtils {
@@ -42,9 +42,12 @@ public class CommonAllProductLinkedUtils {
         offerDTO.setStockQuantity(offer.getStockQuantity());
         offerDTO.setIsDeleted(offer.getIsDeleted());
         offerDTO.setIsAvailable(offer.getIsAvailable());
-        offerDTO.setAttributes(offer.getAttributes().stream()
-                .map(CommonAllProductLinkedUtils::convertAttributeToAttributeDTO)
-                .collect(Collectors.toList()));
+        if (!offer.getAttributes().isEmpty()) {
+            offerDTO.setAttributes(offer.getAttributes().stream()
+                    .map(CommonAllProductLinkedUtils::convertAttributeToAttributeDTO)
+                    .collect(Collectors.toList()));
+        }
+        else offerDTO.setAttributes(new ArrayList<>());
         return offerDTO;
     }
 }

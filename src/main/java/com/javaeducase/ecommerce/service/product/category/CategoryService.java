@@ -42,11 +42,11 @@ public class CategoryService {
         log.info("Fetching children for category with id: {}...", id);
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException("Category with id: " + id + " not found"));
-        List<CategoryDTO> childrenDTO = category.getChildren().stream()
+        List<CategoryDTO> children = category.getChildren().stream()
                 .map(CommonAllProductLinkedUtils::convertCategoryToCategoryDTO)
                 .collect(Collectors.toList());
-        log.info("Retrieved {} children for category with id: {}", childrenDTO.size(), id);
-        return childrenDTO;
+        log.info("Retrieved {} children for category with id: {}", children.size(), id);
+        return children;
     }
 
     public List<ProductDTO> getCategoryProducts(Long id) {
