@@ -80,7 +80,7 @@ public class CartService {
             if (quantity > offer.getStockQuantity()) {
                 throw new IllegalArgumentException("Quantity of product with id: "
                         + offerId
-                        + " being added to the cart exceeds its stock availability");
+                        + ", being added to the cart exceeds its stock availability");
             }
             log.info("Adding new item with offer id: {} to the cart...", offerId);
             CartItem cartItem = cartItemService.createCartItem(offer.getId(), quantity);
