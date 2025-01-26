@@ -69,7 +69,6 @@ class AdminProductServiceTest {
 
     @Test
     void createProduct_Success() {
-        // Arrange
         ProductDTO productDTO = new ProductDTO();
         productDTO.setName("New Product");
         productDTO.setDescription("New Description");
