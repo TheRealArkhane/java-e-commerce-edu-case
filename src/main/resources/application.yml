@@ -19,7 +19,6 @@ springdoc:
   api-docs:
     path: /api-docs
 
-# Настройки для DaDataClient
 daDataClient:
   token: ${DA_DATA_TOKEN}
   secret: ${DA_DATA_SECRET}
