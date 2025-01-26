@@ -2,6 +2,7 @@ package com.javaeducase.ecommerce.client;
 
 import com.javaeducase.ecommerce.dto.order.DaDataAddressDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -15,15 +16,19 @@ import java.util.List;
 public class DaDataClient {
 
     private static final String API_URL = "https://cleaner.dadata.ru/api/v1/clean/address";
-    private static final String TOKEN = "47fef20659bbdeb536f5300dafbeddb5792e7076";
-    private static final String SECRET = "00a2c992072451f940891e392d9c1c9e4c432f21";
+
+    @Value("${daDataClient.token}")
+    private String token;
+
+    @Value("${daDataClient.secret}")
+    private String secret;
 
     private final RestTemplate restTemplate;
 
     public List<DaDataAddressDTO> getCleanAddressList(String address) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Token " + TOKEN);
-        headers.set("X-Secret", SECRET);
+        headers.set("Authorization", "Token " + token);
+        headers.set("X-Secret", secret);
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         String jsonBody = "[\"" + address + "\"]";
