@@ -1,11 +1,13 @@
 package com.javaeducase.ecommerce.service.product.category;
 
 import com.javaeducase.ecommerce.dto.product.CategoryDTO;
+import com.javaeducase.ecommerce.dto.product.CreateCategoryRequestDTO;
 import com.javaeducase.ecommerce.entity.product.Category;
 import com.javaeducase.ecommerce.entity.product.Product;
 import com.javaeducase.ecommerce.exception.product.CategoryNotFoundException;
 import com.javaeducase.ecommerce.repository.product.CategoryRepository;
 import com.javaeducase.ecommerce.repository.product.ProductRepository;
+import com.javaeducase.ecommerce.service.product.product.AdminProductService;
 import com.javaeducase.ecommerce.util.product.CommonAllProductLinkedUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,8 @@ public class AdminCategoryService {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
 
+    private final AdminProductService adminProductService;
+
     public CategoryDTO updateCategory(Long id, CategoryDTO categoryDTO) {
         log.info("Updating category with id: {}...", id);
         Category category = categoryRepository.findById(id)
@@ -32,20 +36,28 @@ public class AdminCategoryService {
         return CommonAllProductLinkedUtils.convertCategoryToCategoryDTO(category);
     }
 
-    public CategoryDTO createCategory(CategoryDTO categoryDTO) {
-        log.info("Creating new category with name: {}...", categoryDTO.getName());
-        Category newCategory = new Category();
-        newCategory.setName(categoryDTO.getName());
+    public CategoryDTO createCategory(CreateCategoryRequestDTO createCategoryRequestDTO) {
+        log.info("Creating new category with name: {}...", createCategoryRequestDTO.getName());
 
-        if (categoryDTO.getParent() != null) {
-            Category parentCategory = categoryRepository.findById(categoryDTO.getParent().getId())
+//        Category existingCategory = categoryRepository.findByName(createCategoryRequestDTO.getName()).orElse(null);
+//        if (existingCategory != null) {
+//            log.warn("Category with name: {} already exists", createCategoryRequestDTO.getName());
+//            throw new IllegalArgumentException("Category with this name already exists");
+//        }
+
+        Category newCategory = new Category();
+        newCategory.setName(createCategoryRequestDTO.getName());
+
+        if (createCategoryRequestDTO.getParentId() != null) {
+            Category parentCategory = categoryRepository.findById(createCategoryRequestDTO.getParentId())
                     .orElseThrow(() -> {
-                        log.warn("Parent category with id: {} not found", categoryDTO.getParent().getId());
+                        log.warn("Parent category with id: {} not found", createCategoryRequestDTO.getParentId());
                         return new CategoryNotFoundException("Parent category with id: "
-                                + categoryDTO.getParent().getId() + " not found");
+                                + createCategoryRequestDTO.getParentId() + " not found");
                     });
+
             newCategory.setParent(parentCategory);
-            parentCategory.getChildren().add(newCategory); // Add new category to parent's children
+            parentCategory.getChildren().add(newCategory);
             log.info("Parent category with id: {} found and new category added as a child", parentCategory.getId());
         } else {
             newCategory.setParent(null);
@@ -71,7 +83,7 @@ public class AdminCategoryService {
         if (!productsInCategory.isEmpty()) {
             log.info("Deleting associated products for category with id: {}...", id);
             for (Product product : productsInCategory) {
-                product.setIsDeleted(true);
+                adminProductService.deleteProduct(product.getId());
             }
             productRepository.saveAll(productsInCategory);
         }

@@ -32,6 +32,9 @@ public class CommonAllProductLinkedUtils {
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setId(category.getId());
         categoryDTO.setName(category.getName());
+        if (category.getParent() != null) {
+            categoryDTO.setParentId(category.getParent().getId());
+        }
         return categoryDTO;
     }
 

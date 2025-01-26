@@ -14,6 +14,7 @@ import lombok.ToString;
 public class CategoryDTO {
     private Long id;
     private String name;
+    private Long parentId;
 
     @JsonIgnore
     private CategoryDTO parent;
