@@ -1,6 +1,7 @@
 package com.javaeducase.ecommerce.controller.product.category;
 
 import com.javaeducase.ecommerce.dto.product.CategoryDTO;
+import com.javaeducase.ecommerce.dto.product.CreateCategoryRequestDTO;
 import com.javaeducase.ecommerce.handler.CustomErrorResponse;
 import com.javaeducase.ecommerce.service.product.category.AdminCategoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,8 +48,8 @@ public class AdminCategoryController {
                             schema = @Schema(implementation = CustomErrorResponse.class))})
     })
     @PostMapping("/create")
-    public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO categoryDTO) {
-        CategoryDTO createdCategory = adminCategoryService.createCategory(categoryDTO);
+    public ResponseEntity<CategoryDTO> createCategory(@RequestBody CreateCategoryRequestDTO requestDTO) {
+        CategoryDTO createdCategory = adminCategoryService.createCategory(requestDTO);
         return ResponseEntity.ok(createdCategory);
     }
 
