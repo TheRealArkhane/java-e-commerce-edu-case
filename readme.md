@@ -60,7 +60,7 @@
 
 Если этот проект оказался полезным, поставьте звезду на GitHub!
 
-Для обратной связи можно связаться со мной по адресу:
+Для обратной связи можно связаться со мной через:
 
 - Email: [fedyanin.v.v@yandex.ru](mailto:fedyanin.v.v@yandex.ru)
 - Telegram: [@fedyanin_1997](https://t.me/fedyanin_1997)
